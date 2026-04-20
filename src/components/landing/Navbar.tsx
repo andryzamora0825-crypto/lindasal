@@ -18,9 +18,9 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 w-full px-5 lg:px-[5%] flex justify-between items-center z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 w-full px-5 lg:px-[5%] flex justify-between items-center z-[999] transition-all duration-500 ${
         scrolled
-          ? "bg-navy/95 backdrop-blur-md border-b border-gold/15 py-3 shadow-lg"
+          ? "bg-navy border-b border-gold/15 py-3 shadow-lg"
           : "bg-transparent py-5"
       }`}
       aria-label="Navegación principal"
@@ -48,6 +48,9 @@ export default function Navbar() {
         <Link href="/tienda" className={btnStyle}>
           <i className="fa-solid fa-bag-shopping text-[0.7rem] mr-1.5" aria-hidden="true"/> Tienda
         </Link>
+        <Link href="/biografia" className={btnStyle}>
+          <i className="fa-solid fa-book-open text-[0.7rem] mr-1.5" aria-hidden="true"/> Biografía
+        </Link>
         <Link href="/feed" className={btnStyle}>Feed</Link>
         <span className={btnDisabled} title="Próximamente">Reels</span>
       </div>
@@ -66,7 +69,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="fixed inset-0 bg-navy z-50 flex flex-col justify-center items-center gap-6 md:hidden">
+        <div className="fixed inset-0 bg-navy z-[1000] flex flex-col justify-center items-center gap-6 md:hidden">
           <button
             className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center text-pearl text-2xl"
             onClick={() => setMenuOpen(false)}
@@ -77,6 +80,9 @@ export default function Navbar() {
           <Link href="#inicio" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>Inicio</Link>
           <Link href="/tienda" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>
             <i className="fa-solid fa-bag-shopping mr-2" aria-hidden="true"/>Tienda
+          </Link>
+          <Link href="/biografia" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>
+            <i className="fa-solid fa-book-open mr-2" aria-hidden="true"/>Biografía
           </Link>
           <Link href="/feed" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>Feed</Link>
           <span className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy opacity-50">Reels</span>
