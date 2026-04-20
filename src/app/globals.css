@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* ── Paleta Aguademar ── */
+  --color-navy: #0a1628;
+  --color-navy-light: #1a2d4a;
+  --color-navy-mid: #122040;
+  --color-gold: #c9a84c;
+  --color-gold-light: #e8d08a;
+  --color-gold-dark: #a8832a;
+  --color-teal: #7ecac3;
+  --color-teal-light: #b8e8e4;
+  --color-teal-dark: #4fa89f;
+  --color-pearl: #f5f0e8;
+  --color-pearl-dark: #e8dfd0;
+  --color-pearl-mid: #ede5d6;
+
+  /* ── Tokens funcionales ── */
+  --color-surface: #ffffff;
+  --color-background: var(--color-pearl);
+  --color-foreground: var(--color-navy);
+
+  /* ── Tipografía ── */
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-sans: var(--font-body);
+}
+
+:root {
+  --background: #f5f0e8;
+  --foreground: #0a1628;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+}
+
+/* ── Gradientes de marca ── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-teal) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Scrollbar premium ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(10, 22, 40, 0.15);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.5);
+}
+
+/* ── Animaciones ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
