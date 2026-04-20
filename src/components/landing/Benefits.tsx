@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 
 const benefitsData = [
   { icon: "fa-bone", title: "Fortalece los huesos" },
@@ -28,6 +28,22 @@ const benefitsData = [
 
 export default function Benefits() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting && !video.paused) {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
   const scrollLeft = () => {
     if (scrollRef.current) scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -86,6 +102,7 @@ export default function Benefits() {
 
         <div className="mt-14 max-w-[800px] mx-auto rounded-3xl overflow-hidden shadow-[0_12px_40px_rgba(10,22,40,0.12)] border-[4px] border-white bg-black">
           <video 
+            ref={videoRef}
             src="/entrevistaaenrique/WhatsApp Video 2026-04-19 at 10.46.39 PM (3).mp4"
             controls
             preload="metadata"
