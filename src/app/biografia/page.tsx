@@ -99,12 +99,42 @@ const videos = [
     src: "/entrevistaaenrique/WhatsApp Video 2026-04-19 at 10.46.39 PM (3).mp4"
   },
   { 
-    title: "El proceso artesanal de la sal marina", 
-    desc: "Del océano a tu mesa: un viaje fascinante paso a paso.", 
-    tag: "Documental",
-    src: null
+    title: "El proceso artesanal de Lindasal", 
+    desc: "Explora la recolección, el secado solar y el trabajo de Enrique en nuestras fuentes naturales.", 
+    tag: "Galería",
+    photos: [
+      "/fotosenrique/WhatsApp Image 2026-04-19 at 10.46.40 PM.jpeg",
+      "/fotosenrique/WhatsApp Image 2026-04-19 at 10.46.40 PM (1).jpeg",
+      "/fotosenrique/WhatsApp Image 2026-04-19 at 10.46.40 PM (2).jpeg",
+      "/fotosenrique/WhatsApp Image 2026-04-19 at 10.46.40 PM (3).jpeg"
+    ]
   },
 ];
+
+/* ─── AutoCarousel Helper ─── */
+function AutoCarousel({ photos }: { photos: string[] }) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (!photos || photos.length === 0) return;
+    const t = setInterval(() => setIdx(i => (i + 1) % photos.length), 3500);
+    return () => clearInterval(t);
+  }, [photos]);
+  
+  return (
+    <div className="absolute inset-0 w-full h-full">
+      {photos.map((p, i) => (
+        <img 
+          key={i} 
+          src={p} 
+          alt="Galería Lindasal" 
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? 'opacity-100' : 'opacity-0'}`}
+        />
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-transparent to-transparent z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-navy/10 z-0 pointer-events-none" />
+    </div>
+  );
+}
 
 /* ════════════════════════════════════════════════════════ */
 export default function BiografiaPage() {
@@ -514,6 +544,11 @@ export default function BiografiaPage() {
                         });
                       }}
                     />
+                  ) : v.photos ? (
+                    <>
+                      <AutoCarousel photos={v.photos} />
+                      <span className="absolute top-4 left-4 px-3 py-1 rounded-md bg-gold/15 text-gold text-[0.7rem] font-bold tracking-widest uppercase border border-gold/20 backdrop-blur-md z-10">{v.tag}</span>
+                    </>
                   ) : (
                     <>
                       <div className="absolute inset-0 bg-gradient-to-br from-navy to-navy-mid z-0"/>
