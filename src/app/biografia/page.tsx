@@ -407,6 +407,12 @@ export default function BiografiaPage() {
                       controls
                       preload="metadata"
                       className="absolute inset-0 w-full h-full object-contain z-20 bg-black"
+                      onPlay={(e) => {
+                        const allVideos = document.querySelectorAll("video");
+                        allVideos.forEach(vid => {
+                          if (vid !== e.currentTarget) vid.pause();
+                        });
+                      }}
                     />
                   ) : (
                     <>
