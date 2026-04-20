@@ -9,8 +9,19 @@ import OpenAI from "openai";
 import { supabase } from "@/lib/supabase";
 import type { GenerateContentParams } from "@/lib/types/social.types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+// Lazy initialization — prevents build crash when env vars are missing on Vercel
+let _ai: GoogleGenAI | null = null;
+let _openai: OpenAI | null = null;
+
+function getAI(): GoogleGenAI {
+  if (!_ai) _ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+  return _ai;
+}
+
+function getOpenAI(): OpenAI {
+  if (!_openai) _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "" });
+  return _openai;
+}
 
 // Same primary models used in Estudio IA
 const NANO_BANANA_2 = "gemini-3.1-flash-image-preview";
@@ -24,7 +35,7 @@ async function generateTextOpenAI(systemPrompt: string): Promise<string> {
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAI().chat.completions.create({
         model: "gpt-4o-mini",
         messages: [{ role: "system", content: systemPrompt }],
         max_tokens: 300,
@@ -187,7 +198,7 @@ REGLAS PARA EL PERSONAJE:
     const modelToUse = hasRefImages ? NANO_BANANA_PRO : NANO_BANANA_2;
 
     // Llamada DIRECTA sin reintentos (si falla, falla rápido en 20s y no a los 2 minutos)
-    response = await ai.models.generateContent({
+    response = await getAI().models.generateContent({
       model: modelToUse,
       contents: contentParts,
       config: {
