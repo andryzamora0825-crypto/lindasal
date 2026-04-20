@@ -58,9 +58,24 @@ const proceso = [
 
 /* ─── Videos ─── */
 const videos = [
-  { title: "Entrevista a Enrique Avellán — Fundador", desc: "La historia, la pasión y la visión detrás de Lindasal.", tag: "Entrevista" },
-  { title: "El proceso artesanal de la sal marina", desc: "Del océano a tu mesa: un viaje fascinante paso a paso.", tag: "Documental" },
-  { title: "Beneficios del Aguademar Quinton", desc: "Cómo el agua de mar concentrada transforma tu salud.", tag: "Educativo" },
+  { 
+    title: "Entrevista a Enrique Avellán — Parte 1", 
+    desc: "Primer segmento de la entrevista donde Enrique comparte la visión y los orígenes de Lindasal.", 
+    tag: "Entrevista",
+    src: "/entrevistaaenrique/WhatsApp Video 2026-04-19 at 10.46.39 PM.mp4"
+  },
+  { 
+    title: "Entrevista a Enrique Avellán — Parte 2", 
+    desc: "Segundo segmento: Enrique explica a profundidad los beneficios y el impacto del agua de mar.", 
+    tag: "Entrevista",
+    src: "/entrevistaaenrique/WhatsApp Video 2026-04-19 at 10.46.39 PM (3).mp4"
+  },
+  { 
+    title: "El proceso artesanal de la sal marina", 
+    desc: "Del océano a tu mesa: un viaje fascinante paso a paso.", 
+    tag: "Documental",
+    src: null
+  },
 ];
 
 /* ─── Beneficios clave ─── */
@@ -384,24 +399,35 @@ export default function BiografiaPage() {
                 className={`group bg-white rounded-2xl overflow-hidden border border-pearl-dark transition-all duration-700 hover:-translate-y-1.5 hover:shadow-[0_8px_32px_rgba(10,22,40,0.08)] hover:border-gold/25 ${s5.vis ? 'opacity-100 translate-y-0':'opacity-0 translate-y-8'}`}
                 style={{ transitionDelay: `${i * 130}ms` }}
               >
-                {/* Thumbnail */}
+                {/* Thumbnail / Video */}
                 <div className="relative aspect-video bg-gradient-to-br from-navy to-navy-mid flex items-center justify-center overflow-hidden">
-                  {/* Subtle wave texture */}
-                  <svg className="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 200 120" preserveAspectRatio="none">
-                    <path d="M0 60C40 40 80 80 120 50C160 20 200 70 200 70V120H0Z" fill="#c9a84c"/>
-                    <path d="M0 80C50 60 100 90 150 70C200 50 200 90 200 90V120H0Z" fill="#7ecac3"/>
-                  </svg>
+                  {v.src ? (
+                    <video 
+                      src={v.src}
+                      controls
+                      preload="metadata"
+                      className="absolute inset-0 w-full h-full object-contain z-20 bg-black"
+                    />
+                  ) : (
+                    <>
+                      {/* Subtle wave texture */}
+                      <svg className="absolute inset-0 w-full h-full opacity-[0.04]" viewBox="0 0 200 120" preserveAspectRatio="none">
+                        <path d="M0 60C40 40 80 80 120 50C160 20 200 70 200 70V120H0Z" fill="#c9a84c"/>
+                        <path d="M0 80C50 60 100 90 150 70C200 50 200 90 200 90V120H0Z" fill="#7ecac3"/>
+                      </svg>
 
-                  {/* Play */}
-                  <div className="relative z-10 w-14 h-14 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center transition-all group-hover:bg-gold/25 group-hover:border-gold/40 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(201,168,76,0.25)]">
-                    <i className="fa-solid fa-play text-white/80 group-hover:text-gold ml-0.5"/>
-                  </div>
+                      {/* Play */}
+                      <div className="relative z-10 w-14 h-14 rounded-full bg-white/10 border-2 border-white/20 flex items-center justify-center transition-all group-hover:bg-gold/25 group-hover:border-gold/40 group-hover:scale-110 group-hover:shadow-[0_0_25px_rgba(201,168,76,0.25)]">
+                        <i className="fa-solid fa-play text-white/80 group-hover:text-gold ml-0.5"/>
+                      </div>
 
-                  {/* Tag */}
-                  <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-gold/15 text-gold text-[0.65rem] font-bold tracking-widest uppercase border border-gold/20 backdrop-blur-sm">{v.tag}</span>
+                      {/* Tag */}
+                      <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-md bg-gold/15 text-gold text-[0.65rem] font-bold tracking-widest uppercase border border-gold/20 backdrop-blur-sm">{v.tag}</span>
 
-                  {/* Coming soon */}
-                  <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-md bg-navy/60 text-pearl/70 text-[0.65rem] font-semibold backdrop-blur-sm border border-white/10">Próximamente</span>
+                      {/* Coming soon */}
+                      <span className="absolute bottom-3 right-3 px-2.5 py-0.5 rounded-md bg-navy/60 text-pearl/70 text-[0.65rem] font-semibold backdrop-blur-sm border border-white/10">Próximamente</span>
+                    </>
+                  )}
                 </div>
 
                 <div className="p-5">
