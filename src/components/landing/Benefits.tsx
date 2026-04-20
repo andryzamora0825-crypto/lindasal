@@ -84,6 +84,21 @@ export default function Benefits() {
           </div>
         </div>
 
+        <div className="mt-14 max-w-[800px] mx-auto rounded-3xl overflow-hidden shadow-[0_12px_40px_rgba(10,22,40,0.12)] border-[4px] border-white bg-black">
+          <video 
+            src="/entrevistaaenrique/WhatsApp Video 2026-04-19 at 10.46.39 PM (3).mp4"
+            controls
+            preload="metadata"
+            className="w-full aspect-video object-contain"
+            onPlay={(e) => {
+              const allVideos = document.querySelectorAll("video");
+              allVideos.forEach(vid => {
+                if (vid !== e.currentTarget) vid.pause();
+              });
+            }}
+          />
+        </div>
+
         <p className="text-center mt-10 text-[0.85rem] text-navy-light/50 italic">
           Tu cuerpo te lo agradecerá. — <strong>@lindasalec</strong>
         </p>
