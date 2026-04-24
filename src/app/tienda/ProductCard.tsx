@@ -7,6 +7,19 @@ interface ProductCardProps {
   onAdd: () => void;
 }
 
+const getBrandStyle = (brand?: string) => {
+  switch (brand) {
+    case "LINDASAL":
+      return { bg: "bg-[#c9a84c]", text: "text-white", label: "LINDASAL" };
+    case "AGUADEMAR QUINTON":
+      return { bg: "bg-teal", text: "text-white", label: "AGUADEMAR" };
+    case "NAVELLA":
+      return { bg: "bg-purple-600", text: "text-white", label: "NAVELLA" };
+    default:
+      return null;
+  }
+};
+
 export default function ProductCard({ product, onQuickView, onAdd }: ProductCardProps) {
   const getCategoryLabel = (cat: string) => {
     switch (cat) {
@@ -19,6 +32,7 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
   };
 
   const isLowStock = product.stock < 10;
+  const brandStyle = getBrandStyle(product.brand);
 
   return (
     <article className="bg-white rounded-3xl border border-pearl-dark shadow-sm overflow-hidden group hover:border-gold/40 hover:shadow-lg transition-all flex flex-col h-full">
@@ -27,11 +41,21 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
           // eslint-disable-next-line @next/next/no-img-element
           <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
-          <i className="fa-solid fa-bottle-droplet text-[3.5rem] text-teal/40 group-hover:scale-110 transition-transform duration-500"></i>
+          <div className="flex flex-col items-center gap-3 opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all duration-500">
+            {product.brand === "AGUADEMAR QUINTON" && <i className="fa-solid fa-droplet text-[3.5rem] text-teal"></i>}
+            {product.brand === "NAVELLA" && <i className="fa-solid fa-flask text-[3.5rem] text-purple-400"></i>}
+            {(product.brand === "LINDASAL" || !product.brand) && <i className="fa-solid fa-bottle-droplet text-[3.5rem] text-[#c9a84c]"></i>}
+          </div>
         )}
         
         {/* Badges overlay */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 items-start">
+          {/* Brand badge */}
+          {brandStyle && (
+            <span className={`${brandStyle.bg} ${brandStyle.text} text-[0.6rem] font-extrabold tracking-[0.12em] uppercase px-2.5 py-1 rounded-md shadow-sm`}>
+              {brandStyle.label}
+            </span>
+          )}
           <span className="bg-white/90 backdrop-blur-sm text-[0.65rem] font-bold tracking-wider uppercase text-navy px-2.5 py-1 rounded-md shadow-sm border border-pearl/60">
             {getCategoryLabel(product.category)}
           </span>
@@ -42,9 +66,14 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
           )}
           {product.is_featured && (
             <span className="bg-gold/90 backdrop-blur-sm text-[0.65rem] font-bold tracking-wider uppercase text-navy px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-gold-light/40">
-              <i className="fa-solid fa-star text-[0.55rem]"></i> Nuevo
+              <i className="fa-solid fa-star text-[0.55rem]"></i> Destacado
             </span>
           )}
+          {product.discount_percentage && product.discount_percentage > 0 ? (
+            <span className="bg-red-500/90 backdrop-blur-sm text-[0.7rem] font-bold tracking-wider uppercase text-white px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-red-400">
+              -{product.discount_percentage}% OFF
+            </span>
+          ) : null}
         </div>
 
         {/* Hover overlay for quick view */}
@@ -61,11 +90,28 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
       <div className="p-6 flex flex-col flex-1">
         <h3 className="font-heading font-semibold text-xl text-navy mb-1 leading-tight line-clamp-2 min-h-[50px]">{product.name}</h3>
         <p className="text-navy-light/60 text-sm line-clamp-2 mb-4 leading-relaxed">{product.description}</p>
-        <div className="font-heading font-bold text-2xl text-navy mb-5 mt-auto">${product.price.toFixed(2)}</div>
+        
+        {/* Price section with discount logic */}
+        <div className="mb-5 mt-auto flex items-end gap-2">
+          {product.discount_percentage && product.discount_percentage > 0 ? (
+            <>
+              <span className="font-heading font-bold text-2xl text-navy">
+                ${(product.price * (1 - product.discount_percentage / 100)).toFixed(2)}
+              </span>
+              <span className="font-heading font-medium text-lg text-slate-400 line-through mb-0.5">
+                ${product.price.toFixed(2)}
+              </span>
+            </>
+          ) : (
+            <span className="font-heading font-bold text-2xl text-navy">
+              ${product.price.toFixed(2)}
+            </span>
+          )}
+        </div>
         
         <button 
           onClick={(e) => {
-            // Ripple animation logic could go here
+            e.stopPropagation();
             onAdd();
           }}
           className="w-full bg-gradient-to-r from-navy to-navy/90 hover:from-navy border border-navy text-pearl font-medium py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2 group-hover:bg-gold group-hover:border-gold group-hover:text-navy"

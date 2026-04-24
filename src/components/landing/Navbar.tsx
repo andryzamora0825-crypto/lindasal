@@ -27,7 +27,7 @@ export default function Navbar() {
     >
       {/* Logo container */}
       <div className="flex-1 flex justify-start z-10">
-        <Link href="#inicio" className="flex items-center gap-2 shrink-0">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
           <svg className="w-9 h-9 shrink-0" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 22C3 22 7 14 12 14C17 14 19 20 24 20C29 20 33 14 33 14" stroke="url(#wG1)" strokeWidth="2.5" strokeLinecap="round"/>
             <path d="M3 27C3 27 7 19 12 19C17 19 19 25 24 25C29 25 33 19 33 19" stroke="url(#wG2)" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
@@ -46,7 +46,7 @@ export default function Navbar() {
 
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-2 z-10">
-        <Link href="#inicio" className={btnStyle}>Inicio</Link>
+        <Link href="/" className={btnStyle}>Inicio</Link>
         <Link href="/tienda" className={btnStyle}>
           <i className="fa-solid fa-bag-shopping text-[0.7rem] mr-1.5" aria-hidden="true"/> Tienda
         </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
           >
             ✕
           </button>
-          <Link href="#inicio" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>Inicio</Link>
+          <Link href="/" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>Inicio</Link>
           <Link href="/tienda" className="px-8 py-3 rounded-full font-body font-semibold text-lg bg-gold text-navy" onClick={() => setMenuOpen(false)}>
             <i className="fa-solid fa-bag-shopping mr-2" aria-hidden="true"/>Tienda
           </Link>

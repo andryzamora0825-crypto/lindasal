@@ -59,8 +59,16 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
         <div className="w-full md:w-[55%] p-6 md:p-10 flex flex-col max-h-[85vh] overflow-y-auto">
           <span className="text-[0.7rem] font-bold tracking-[0.15em] text-gold uppercase mb-2">{product.category}</span>
           <h2 id="modal-name" className="font-heading text-3xl md:text-4xl font-bold text-navy mb-2 leading-[1.15]">{product.name}</h2>
-          <div className="font-heading text-3xl font-bold bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent mb-6">
-            ${product.price.toFixed(2)}
+          <div className="font-heading text-3xl font-bold bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent mb-6 flex items-end gap-3">
+            {product.discount_percentage && product.discount_percentage > 0 ? (
+              <>
+                ${(product.price * (1 - product.discount_percentage / 100)).toFixed(2)}
+                <span className="text-xl text-slate-400 line-through mb-1">${product.price.toFixed(2)}</span>
+                <span className="text-sm bg-red-100 text-red-600 px-2 py-0.5 rounded-md mb-1.5 font-bold">-{product.discount_percentage}% OFF</span>
+              </>
+            ) : (
+              `$${product.price.toFixed(2)}`
+            )}
           </div>
           
           <p className="text-navy-light/70 leading-[1.8] text-[0.95rem] mb-8">{product.description}</p>

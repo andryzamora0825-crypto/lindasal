@@ -14,7 +14,10 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
   const [customerName, setCustomerName] = React.useState("");
   
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
-  const total = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+  const total = cart.reduce((acc, item) => {
+    const finalPrice = item.discount_percentage ? item.price * (1 - item.discount_percentage / 100) : item.price;
+    return acc + (finalPrice * item.quantity);
+  }, 0);
 
   return (
     <>
@@ -55,7 +58,8 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
             </div>
           ) : (
             cart.map(item => {
-              const subtotal = item.price * item.quantity;
+              const finalPrice = item.discount_percentage ? item.price * (1 - item.discount_percentage / 100) : item.price;
+              const subtotal = finalPrice * item.quantity;
               return (
                 <div key={item.id} className="flex gap-4 p-4 border border-pearl-dark rounded-2xl relative group bg-white shadow-sm hover:border-gold/30 hover:shadow-md transition-all">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -63,7 +67,12 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
                   
                   <div className="flex flex-col flex-1">
                     <span className="font-heading font-bold text-navy leading-tight pr-6">{item.name}</span>
-                    <span className="font-body font-bold text-gold">${item.price.toFixed(2)}</span>
+                    <div className="flex items-end gap-2">
+                      <span className="font-body font-bold text-gold">${finalPrice.toFixed(2)}</span>
+                      {item.discount_percentage && item.discount_percentage > 0 ? (
+                        <span className="text-[0.65rem] text-slate-400 line-through mb-0.5">${item.price.toFixed(2)}</span>
+                      ) : null}
+                    </div>
                     
                     <div className="flex items-center gap-3 mt-3">
                       <div className="flex items-center border border-pearl-dark rounded-lg overflow-hidden h-8">

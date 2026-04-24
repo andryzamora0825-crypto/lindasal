@@ -39,15 +39,15 @@ export default function Hero() {
           </span>
         </div>
 
-        <h1 className="font-heading text-[clamp(2.4rem,9vw,3.5rem)] md:text-[clamp(3rem,6.5vw,6rem)] font-bold text-pearl leading-[1.08] mb-6 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
-          La Sal que<br className="hidden md:block" />{" "}
+        <h1 className="font-heading text-[clamp(1.8rem,5vw,2.2rem)] md:text-[clamp(2rem,3.5vw,3rem)] font-bold text-pearl leading-[1.15] mb-6 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
+          EL PODER DEL<br className="hidden md:block" />{" "}
           <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent">
-            <em className="font-light italic">Sana el Alma</em>
+            <em className="font-light italic">MAR EN TUS MANOS</em>
           </span>
         </h1>
 
-        <p className="font-body text-[clamp(1rem,1.8vw,1.2rem)] text-pearl/85 leading-[1.8] mb-8 max-w-full md:max-w-[520px] drop-shadow-lg animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-          Extraída artesanalmente de los mares vírgenes de Ecuador. Cada granito contiene 40% menos de cloruro de sodio y 60% de minerales naturales — potasio, calcio, magnesio, hierro y más — que tu cuerpo necesita para florecer.
+        <p className="font-body text-[clamp(1rem,1.8vw,1.2rem)] text-pearl/85 leading-[1.8] mb-8 max-w-full md:max-w-[620px] drop-shadow-lg animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+          Desde hace millones de años, el mar guarda el secreto de la vida. En LINDASAL, llevamos ese poder ancestral directamente a ti. Somos pioneros en Ecuador en productos 100% naturales de origen marino: LINDASAL, AGUADEMAR QUINTON, NAVELLA.
         </p>
 
         <div className="flex flex-wrap gap-2 mb-8 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.65s' }} role="list">

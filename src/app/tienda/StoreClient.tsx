@@ -10,6 +10,41 @@ import CartDrawer from "./CartDrawer";
 
 const WHATSAPP_NUMBER = "593964008919";
 
+const BRANDS = [
+  {
+    id: "all",
+    label: "Todas las Marcas",
+    color: "bg-navy border-navy text-pearl",
+    inactiveColor: "bg-white border-pearl-dark text-navy/70 hover:border-gold hover:text-navy",
+    dot: null,
+  },
+  {
+    id: "LINDASAL",
+    label: "LINDASAL",
+    color: "bg-[#c9a84c] border-[#c9a84c] text-white",
+    inactiveColor: "bg-white border-pearl-dark text-[#c9a84c] hover:border-[#c9a84c]",
+    dot: "bg-[#c9a84c]",
+    icon: "fa-salt-shaker",
+  },
+  {
+    id: "AGUADEMAR QUINTON",
+    label: "AGUADEMAR",
+    labelFull: "AGUADEMAR QUINTON",
+    color: "bg-teal border-teal text-white",
+    inactiveColor: "bg-white border-pearl-dark text-teal hover:border-teal",
+    dot: "bg-teal",
+    icon: "fa-droplet",
+  },
+  {
+    id: "NAVELLA",
+    label: "NAVELLA",
+    color: "bg-purple-600 border-purple-600 text-white",
+    inactiveColor: "bg-white border-pearl-dark text-purple-600 hover:border-purple-400",
+    dot: "bg-purple-600",
+    icon: "fa-sparkles",
+  },
+];
+
 export default function StoreClient() {
   const [products, setProducts] = useState<Product[]>(mockProducts);
   
@@ -29,6 +64,7 @@ export default function StoreClient() {
   }, []);
   
   // Filters
+  const [activeBrand, setActiveBrand] = useState<string>("all");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [activeSort, setActiveSort] = useState<string>("relevance");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -64,8 +100,13 @@ export default function StoreClient() {
       result = result.filter(p => 
         p.name.toLowerCase().includes(lowerSearch) || 
         p.category.toLowerCase().includes(lowerSearch) ||
-        p.description?.toLowerCase().includes(lowerSearch)
+        p.description?.toLowerCase().includes(lowerSearch) ||
+        p.brand?.toLowerCase().includes(lowerSearch)
       );
+    }
+
+    if (activeBrand !== "all") {
+      result = result.filter(p => p.brand === activeBrand);
     }
 
     if (activeCategory !== "all") {
@@ -91,7 +132,7 @@ export default function StoreClient() {
     }
 
     return result;
-  }, [products, searchTerm, activeCategory, priceMax, activeSort]);
+  }, [products, searchTerm, activeBrand, activeCategory, priceMax, activeSort]);
 
   // Actions
   const addToCart = (product: Product, quantity = 1) => {
@@ -102,7 +143,6 @@ export default function StoreClient() {
       }
       return [...prev, { ...product, quantity }];
     });
-    // Add visual feedback
     setIsCartOpen(true);
   };
 
@@ -122,6 +162,7 @@ export default function StoreClient() {
 
   const clearFilters = () => {
     setSearchTerm("");
+    setActiveBrand("all");
     setActiveCategory("all");
     setActiveSort("relevance");
     setPriceMax(100);
@@ -132,7 +173,8 @@ export default function StoreClient() {
 
     let total = 0;
     cart.forEach(item => {
-      total += item.price * item.quantity;
+      const finalPrice = item.discount_percentage ? item.price * (1 - item.discount_percentage / 100) : item.price;
+      total += finalPrice * item.quantity;
     });
 
     // Try to register the order in Supabase
@@ -152,9 +194,9 @@ export default function StoreClient() {
     message += `🛒 *Productos solicitados:*\n─────────────────────\n`;
 
     cart.forEach(item => {
-      const sub = item.price * item.quantity;
-      total += sub;
-      message += `• *${item.name}*\n  ${item.quantity} uni × $${item.price.toFixed(2)} = *$${sub.toFixed(2)}*\n`;
+      const finalPrice = item.discount_percentage ? item.price * (1 - item.discount_percentage / 100) : item.price;
+      const sub = finalPrice * item.quantity;
+      message += `• *${item.name}*\n  ${item.quantity} uni × $${finalPrice.toFixed(2)} = *$${sub.toFixed(2)}*\n`;
     });
 
     message += `─────────────────────\n💰 *TOTAL: $${total.toFixed(2)}*\n_(El total no incluye costos de envío)_\n\nPor favor, confírmeme disponibilidad, opciones de pago y tiempo de entrega. ¡Gracias! 🙏`;
@@ -182,6 +224,30 @@ export default function StoreClient() {
           </span>
         )}
       </button>
+
+      {/* BRAND FILTER HERO TABS */}
+      <div className="w-full mb-8">
+        <p className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4 text-center">Filtrar por Marca</p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {BRANDS.map(brand => (
+            <button
+              key={brand.id}
+              onClick={() => setActiveBrand(brand.id)}
+              className={`px-5 py-2.5 rounded-full text-sm font-bold border-2 transition-all flex items-center gap-2 shadow-sm ${
+                activeBrand === brand.id ? brand.color : brand.inactiveColor
+              }`}
+            >
+              {brand.dot && (
+                <span className={`w-2.5 h-2.5 rounded-full ${activeBrand === brand.id ? "bg-white/60" : brand.dot}`}></span>
+              )}
+              {brand.label}
+              <span className="text-[0.7rem] opacity-70">
+                ({products.filter(p => brand.id === "all" ? true : p.brand === brand.id).length})
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         
@@ -216,6 +282,28 @@ export default function StoreClient() {
               </div>
             </div>
 
+            {/* Brand Filter in Sidebar (Mobile) */}
+            <div>
+              <label className="text-xs font-bold text-navy uppercase tracking-wider mb-3 block">Marca</label>
+              <div className="flex flex-col gap-2">
+                {BRANDS.map(brand => (
+                  <button
+                    key={brand.id}
+                    onClick={() => setActiveBrand(brand.id)}
+                    className={`w-full text-left px-3 py-2 rounded-xl text-sm border flex items-center gap-2 transition-all ${
+                      activeBrand === brand.id
+                        ? "bg-navy/5 border-navy/20 font-semibold text-navy"
+                        : "bg-white border-pearl-dark text-navy/60 hover:border-gold/40"
+                    }`}
+                  >
+                    {brand.dot && <span className={`w-2 h-2 rounded-full ${brand.dot}`}></span>}
+                    {brand.labelFull || brand.label}
+                    {activeBrand === brand.id && <i className="fa-solid fa-check ml-auto text-gold text-xs"></i>}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Categories */}
             <div>
               <label className="text-xs font-bold text-navy uppercase tracking-wider mb-3 block">Categoría</label>
@@ -241,7 +329,7 @@ export default function StoreClient() {
 
             {/* Price Range */}
             <div>
-              <label className="text-xs font-bold text-navy uppercase tracking-wider mb-3 block flex justify-between">
+              <label className="text-xs font-bold text-navy uppercase tracking-wider mb-3 flex justify-between">
                 <span>Precio Máx.</span>
                 <span className="text-gold">${priceMax}</span>
               </label>
@@ -286,7 +374,16 @@ export default function StoreClient() {
           <div className="flex flex-col sm:flex-row justify-between items-center bg-white border border-pearl-dark rounded-2xl p-4 mb-6 shadow-sm gap-4">
             <span className="font-medium text-navy text-sm">
               Mostrando <strong>{filteredProducts.length}</strong> producto{filteredProducts.length !== 1 ? 's' : ''}
+              {activeBrand !== "all" && <span className="ml-2 text-gold font-semibold">· {activeBrand}</span>}
             </span>
+            {(activeBrand !== "all" || activeCategory !== "all" || searchTerm) && (
+              <button
+                onClick={clearFilters}
+                className="text-xs text-navy/50 hover:text-red-500 transition-colors flex items-center gap-1"
+              >
+                <i className="fa-solid fa-xmark"></i> Quitar filtros
+              </button>
+            )}
           </div>
 
           {filteredProducts.length === 0 ? (
@@ -324,9 +421,9 @@ export default function StoreClient() {
           setSelectedProduct(null);
         }}
         onOrderWhatsApp={async (product, qty) => {
-          const total = product.price * qty;
+          const finalPrice = product.discount_percentage ? product.price * (1 - product.discount_percentage / 100) : product.price;
+          const total = finalPrice * qty;
 
-          // Register quick order in Supabase
           try {
             await supabase.from("ventas").insert([{
               customer_name: "Comprador Rápido",

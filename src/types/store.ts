@@ -4,10 +4,12 @@ export interface Product {
   description: string;
   price: number;
   category: "comestible" | "belleza" | "terapeutica" | "combos" | string;
+  brand?: "LINDASAL" | "AGUADEMAR QUINTON" | "NAVELLA" | string;
   image_url: string | null;
   stock: number;
   is_featured: boolean;
   is_active: boolean;
+  discount_percentage?: number;
   created_at?: string;
 }
 

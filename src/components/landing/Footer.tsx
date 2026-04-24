@@ -17,7 +17,7 @@ export default function Footer() {
               <span className="font-heading text-xl font-bold tracking-tight bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent leading-none">Lindasal</span>
             </Link>
             <p className="text-[0.88rem] text-pearl/70 leading-[1.7] mb-4">
-              Extraída artesanalmente de los mares vírgenes de Ecuador. Promoviendo la salud y el bienestar a través de minerales orgánicos 100% naturales.
+              Lindasal es producida en tierras protegidas y cuidadas por nuestra familia durante más de 86 años, lo que permite conservar sus minerales y ofrecer un producto 100% natural.
             </p>
             <div className="flex gap-3">
               <a href="https://www.instagram.com/lindasalec" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 text-pearl border border-white/10 transition-all hover:-translate-y-1 hover:bg-gold hover:border-gold hover:text-navy hover:shadow-lg">
