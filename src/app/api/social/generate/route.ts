@@ -106,8 +106,27 @@ export async function POST(request: Request) {
       // Pasamos el base64 directamente en aiSettings para evitar re-descargas
       (aiSettings as any).productImageBase64 = productBase64;
       (aiSettings as any).productImageMime = productMime;
+      if (productData.brandLogoUrl) {
+        (aiSettings as any).brandLogoUrl = productData.brandLogoUrl;
+      }
 
-      const adImagePrompt = `Crea una FOTOGRAFÍA PUBLICITARIA PROFESIONAL DE ALTA GAMA para este producto. Instrucción del usuario: "${topic}". Nombre comercial: ${productData.name}. MANTÉN FIELMENTE EL LOGOTIPO, FORMA Y DISEÑO ORIGINAL del envase (referencia adjunta). El producto DEBE aparecer como protagonista absoluto de la imagen en una escena inmersiva de alta calidad.`;
+      const discountText = productData.hasDiscount ? `¡OFERTA: ${productData.discountValue}% DE DESCUENTO!` : '';
+      
+      const adImagePrompt = `Crea una FOTOGRAFÍA PUBLICITARIA PROFESIONAL DE ALTA GAMA para promocionar este producto.
+Instrucción creativa del usuario: "${topic}".
+
+DATOS DEL PRODUCTO A DESTACAR VISUALMENTE:
+- Nombre: ${productData.name}
+- Marca: ${productData.brand}
+- Precio: $${productData.price} ${discountText}
+- Beneficios / Descripción: ${productData.description}
+
+REGLAS DE DISEÑO PUBLICITARIO:
+1. MANTÉN FIELMENTE EL LOGOTIPO, FORMA Y DISEÑO ORIGINAL del envase (referencia adjunta).
+2. El producto DEBE aparecer como protagonista absoluto de la imagen.
+3. La escena debe ser inmersiva, de alta calidad, invitando a la compra y reflejando los beneficios descritos (${productData.description}).
+4. Si es posible, integra tipográficamente la marca, nombre o precio en el entorno de la imagen de forma elegante.
+5. El tono general de la imagen debe ser sumamente comercial y publicitario.`;
 
       try {
         const imgRes = await generateImage(adImagePrompt, userId, "portrait", aiSettings);

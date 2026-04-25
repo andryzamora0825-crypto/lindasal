@@ -426,13 +426,35 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                 </div>
 
                 {/* Generated Image */}
-                <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-hidden">
+                <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-hidden relative group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src={generatedImage} 
                     alt="Imagen publicitaria generada" 
                     className="w-full h-full object-contain"
                   />
+                  {/* Botones Flotantes (Hover) */}
+                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => window.open(generatedImage, '_blank')}
+                      className="bg-black/70 hover:bg-black text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg"
+                      title="Ver en pantalla completa"
+                    >
+                      <i className="fa-solid fa-expand"></i>
+                    </button>
+                    <button 
+                      onClick={() => {
+                        if(confirm('¿Estás seguro de descartar esta imagen?')) {
+                          setGeneratedImage(null);
+                          setGeneratedCaption("");
+                        }
+                      }}
+                      className="bg-red-500/80 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg"
+                      title="Descartar imagen"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Caption Preview */}
