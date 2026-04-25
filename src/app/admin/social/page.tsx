@@ -209,7 +209,12 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
       const result = await response.json();
       
       if (!response.ok || result.error) {
-        throw new Error(result.error || "Error generando la imagen.");
+        let errMsg = "Error generando la imagen.";
+        if (typeof result.error === "string") errMsg = result.error;
+        else if (result.error?.message) errMsg = result.error.message;
+        else if (result.error) errMsg = JSON.stringify(result.error);
+        
+        throw new Error(errMsg);
       }
 
       if (result.post?.image_url) {
@@ -557,65 +562,111 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
       </div>
 
       {/* HISTORY SECTION */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-2">
-        <div className="p-5 border-b border-slate-100 bg-slate-50">
-          <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-            <i className="fa-solid fa-clock-rotate-left text-navy"></i> Historial de Generaciones Recientes
-          </h2>
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
+        <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+              <i className="fa-solid fa-clock-rotate-left text-navy"></i> Historial
+            </h2>
+            <p className="text-xs text-slate-500 mt-1">{postHistory.length} imágenes generadas</p>
+          </div>
         </div>
         <div className="p-6">
           {isLoadingHistory ? (
             <div className="flex justify-center items-center py-12">
-              <div className="w-8 h-8 border-4 border-navy/20 border-t-navy rounded-full animate-spin"></div>
+              <div className="w-8 h-8 border-4 border-slate-200 border-t-teal rounded-full animate-spin"></div>
             </div>
           ) : postHistory.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-              {postHistory.map(post => (
-                <div key={post.id} className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-square bg-slate-100">
-                  {post.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={post.image_url} alt="Generado" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
-                      <i className="fa-solid fa-image"></i>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3">
-                    {post.image_url && (
-                      <div className="flex gap-2">
-                        <button 
-                          onClick={() => window.open(post.image_url, '_blank')}
-                          className="bg-black/80 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black transition-colors shadow-lg"
-                          title="Pantalla Completa"
-                        >
-                          <i className="fa-solid fa-expand text-sm"></i>
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setGeneratedImage(post.image_url);
-                            setGeneratedCaption(post.caption || "");
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="bg-white text-slate-800 w-9 h-9 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-colors shadow-lg"
-                          title="Subir a Vista Previa principal"
-                        >
-                          <i className="fa-solid fa-arrow-up text-sm"></i>
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteHistoryPost(post.id)}
-                          className="bg-red-500/90 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
-                          title="Eliminar del historial"
-                        >
-                          <i className="fa-solid fa-trash-can text-sm"></i>
-                        </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {postHistory.map(post => {
+                // Formatting time relative or simple date
+                const timeAgo = post.created_at ? new Date(post.created_at).toLocaleDateString() : "Reciente";
+                
+                return (
+                <div key={post.id} className="flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group">
+                  {/* Image Section */}
+                  <div className="relative aspect-[3/4] w-full bg-slate-50 overflow-hidden">
+                    {post.image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={post.image_url} alt="Generado" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-slate-300">
+                        <i className="fa-solid fa-image text-4xl"></i>
                       </div>
                     )}
                   </div>
+                  
+                  {/* Content Section */}
+                  <div className="p-4 flex flex-col flex-1 gap-3">
+                    <p className="text-slate-600 text-xs line-clamp-3 leading-relaxed">
+                      &quot;{post.caption || "Sin texto generado"}&quot;
+                    </p>
+                    
+                    {/* Primary Actions */}
+                    <div className="flex flex-col gap-2 mt-auto pt-2">
+                      <button 
+                        onClick={() => {
+                          setGeneratedImage(post.image_url);
+                          setGeneratedCaption(post.caption || "");
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="w-full py-2 bg-navy border border-navy hover:bg-navy/90 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"
+                      >
+                        <i className="fa-solid fa-arrow-up"></i> Cargar al Editor
+                      </button>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <a 
+                          href={post.image_url}
+                          download={`ad_${post.id}.png`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="py-2 bg-teal/5 border border-teal/20 hover:bg-teal/10 text-teal-700 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          <i className="fa-solid fa-download"></i> Bajar
+                        </a>
+                        <button 
+                          onClick={() => {
+                            if (post.caption) {
+                              navigator.clipboard.writeText(post.caption);
+                              alert("✅ Texto copiado al portapapeles");
+                            }
+                          }}
+                          className="py-2 bg-gold/5 border border-gold/20 hover:bg-gold/10 text-[#c9a84c] rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          <i className="fa-solid fa-copy"></i> Copiar
+                        </button>
+                        <button 
+                          onClick={() => window.open(post.image_url, '_blank')}
+                          className="py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          <i className="fa-solid fa-eye"></i> Ver
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteHistoryPost(post.id)}
+                          className="py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                          <i className="fa-solid fa-trash-can"></i> Borrar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Footer */}
+                  <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                        <i className="fa-solid fa-user text-[8px]"></i>
+                      </div>
+                      <span className="font-medium text-slate-600">Lindasal Admin</span>
+                    </div>
+                    <span>{timeAgo}</span>
+                  </div>
                 </div>
-              ))}
+              )})}
             </div>
           ) : (
-            <p className="text-center text-slate-500 py-8">Aún no hay imágenes generadas en el historial.</p>
+            <p className="text-center text-slate-500 py-12">Aún no hay imágenes generadas en el historial.</p>
           )}
         </div>
       </div>
