@@ -616,15 +616,31 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                       </button>
                       
                       <div className="grid grid-cols-2 gap-2">
-                        <a 
-                          href={post.image_url}
-                          download={`ad_${post.id}.png`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button 
+                          onClick={async () => {
+                            if (!post.image_url) return;
+                            try {
+                              // Fuerza la descarga convirtiendo la URL a un Blob local
+                              const response = await fetch(post.image_url);
+                              const blob = await response.blob();
+                              const blobUrl = window.URL.createObjectURL(blob);
+                              const link = document.createElement('a');
+                              link.href = blobUrl;
+                              link.download = `lindasal_publicidad_${post.id}.png`;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                              window.URL.revokeObjectURL(blobUrl);
+                            } catch (error) {
+                              console.error("Error forzando descarga:", error);
+                              // Fallback por si acaso falla el fetch por CORS
+                              window.open(post.image_url, '_blank');
+                            }
+                          }}
                           className="py-2 bg-teal/5 border border-teal/20 hover:bg-teal/10 text-teal-700 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
                         >
                           <i className="fa-solid fa-download"></i> Bajar
-                        </a>
+                        </button>
                         <button 
                           onClick={() => {
                             if (post.caption) {
