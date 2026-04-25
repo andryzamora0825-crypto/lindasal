@@ -201,7 +201,7 @@ export default function AdminProductosPage() {
   );
 
   // Delete Product
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = async (id: string | number, name: string) => {
     if (!window.confirm(`¿Estás seguro de eliminar el producto "${name}"? Esta acción no se puede deshacer.`)) {
       return;
     }
@@ -223,7 +223,7 @@ export default function AdminProductosPage() {
     
     // Identificar duplicados
     const seenNames = new Set<string>();
-    const duplicateIds: string[] = [];
+    const duplicateIds: (string | number)[] = [];
     
     // Sort by created_at ascending to keep the oldest one
     const sorted = [...products].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
