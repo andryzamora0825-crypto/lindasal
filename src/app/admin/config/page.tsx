@@ -45,14 +45,14 @@ export default function AdminConfigPage() {
 
       // Subir a Supabase Storage
       const { error: uploadError } = await supabase.storage
-        .from("productos")
+        .from("logos")
         .upload(fileName, file, { cacheControl: "3600", upsert: true });
 
       if (uploadError) throw uploadError;
 
       // Obtener URL pública
       const { data: publicUrlData } = supabase.storage
-        .from("productos")
+        .from("logos")
         .getPublicUrl(fileName);
 
       const url = publicUrlData.publicUrl;

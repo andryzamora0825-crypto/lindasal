@@ -71,13 +71,13 @@ export default function AdminSocialPage() {
       const fileName = `logo_${brandId.replace(/\s+/g, "_")}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
-        .from("productos")
+        .from("logos")
         .upload(fileName, file, { cacheControl: "3600", upsert: true });
 
       if (uploadError) throw uploadError;
 
       const { data: publicUrlData } = supabase.storage
-        .from("productos")
+        .from("logos")
         .getPublicUrl(fileName);
 
       const url = publicUrlData.publicUrl;
