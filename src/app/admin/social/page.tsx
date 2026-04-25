@@ -39,6 +39,9 @@ export default function AdminSocialPage() {
   const [generatedCaption, setGeneratedCaption] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // UI state
+  const [showLogosConfig, setShowLogosConfig] = useState(false);
+
   // History state
   const [postHistory, setPostHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
@@ -238,48 +241,57 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
         </div>
       </header>
 
-      {/* BRAND LOGOS CONFIG */}
+      {/* BRAND LOGOS CONFIG (COLLAPSIBLE) */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50">
-          <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-            <i className="fa-solid fa-palette text-gold"></i> Logos de Marca
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">Sube los logos PNG sin fondo de cada marca para usarlos en la generación de imágenes.</p>
-        </div>
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {BRANDS.map(brand => (
-            <div key={brand.id} className="flex flex-col items-center gap-3">
-              <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
-                {brandLogos[brand.id as keyof BrandLogos] ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img 
-                    src={brandLogos[brand.id as keyof BrandLogos]} 
-                    alt={brand.label} 
-                    className="w-full h-full object-contain p-2"
+        <button 
+          onClick={() => setShowLogosConfig(!showLogosConfig)}
+          className="w-full p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between hover:bg-slate-100 transition-colors"
+        >
+          <div className="text-left">
+            <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+              <i className="fa-solid fa-palette text-gold"></i> Ajustes de Logos
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">Sube los logos PNG sin fondo para cada marca.</p>
+          </div>
+          <i className={`fa-solid fa-chevron-${showLogosConfig ? 'up' : 'down'} text-slate-400`}></i>
+        </button>
+
+        {showLogosConfig && (
+          <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in">
+            {BRANDS.map(brand => (
+              <div key={brand.id} className="flex flex-col items-center gap-3">
+                <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+                  {brandLogos[brand.id as keyof BrandLogos] ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img 
+                      src={brandLogos[brand.id as keyof BrandLogos]} 
+                      alt={brand.label} 
+                      className="w-full h-full object-contain p-2"
+                    />
+                  ) : (
+                    <i className="fa-solid fa-image text-2xl text-slate-300"></i>
+                  )}
+                </div>
+                <span className={`text-[0.65rem] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full ${brand.color}`}>
+                  {brand.label}
+                </span>
+                <label className="text-xs font-bold text-slate-500 cursor-pointer hover:text-navy transition-colors flex items-center gap-1">
+                  <i className="fa-solid fa-cloud-arrow-up"></i>
+                  {brandLogos[brand.id as keyof BrandLogos] ? "Cambiar" : "Subir PNG"}
+                  <input 
+                    type="file" 
+                    accept="image/png,image/webp"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleUploadBrandLogo(brand.id, file);
+                    }}
                   />
-                ) : (
-                  <i className="fa-solid fa-image text-2xl text-slate-300"></i>
-                )}
+                </label>
               </div>
-              <span className={`text-[0.65rem] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full ${brand.color}`}>
-                {brand.label}
-              </span>
-              <label className="text-xs font-bold text-slate-500 cursor-pointer hover:text-navy transition-colors flex items-center gap-1">
-                <i className="fa-solid fa-cloud-arrow-up"></i>
-                {brandLogos[brand.id as keyof BrandLogos] ? "Cambiar" : "Subir PNG"}
-                <input 
-                  type="file" 
-                  accept="image/png,image/webp"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleUploadBrandLogo(brand.id, file);
-                  }}
-                />
-              </label>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* MAIN GENERATOR */}
