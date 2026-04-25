@@ -236,10 +236,10 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex justify-between items-end">
+      <header className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Publicidad de Productos</h1>
-          <p className="text-slate-500 mt-1">Genera imágenes publicitarias profesionales con IA para tus redes sociales.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Publicidad de Productos</h1>
+          <p className="text-sm sm:text-base text-slate-500 mt-1">Genera imágenes publicitarias profesionales con IA para tus redes sociales.</p>
         </div>
         <div className="bg-teal/10 text-teal-700 px-4 py-2 border border-teal-200 rounded-xl text-sm font-semibold flex items-center gap-2">
           <i className="fa-solid fa-robot"></i> Gemini AI
@@ -366,7 +366,7 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
           {/* Brand */}
           <div>
             <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Marca</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               {BRANDS.map(brand => (
                 <button
                   key={brand.id}
@@ -416,17 +416,19 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
           {hasDiscount && (
             <div className="animate-fade-in">
               <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Porcentaje de Descuento (%)</label>
-              <div className="flex items-center gap-3">
-                <input 
-                  type="number" 
-                  value={discountPercent} 
-                  onChange={e => setDiscountPercent(e.target.value)}
-                  placeholder="Ej: 20"
-                  className="w-24 border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy text-center font-bold"
-                />
-                <span className="text-slate-400 text-sm">%</span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="number" 
+                    value={discountPercent} 
+                    onChange={e => setDiscountPercent(e.target.value)}
+                    placeholder="Ej: 20"
+                    className="w-24 border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy text-center font-bold"
+                  />
+                  <span className="text-slate-400 text-sm">%</span>
+                </div>
                 {productPrice && discountPercent && (
-                  <div className="flex items-center gap-2 text-sm">
+                  <div className="flex items-center gap-2 text-sm mt-2 sm:mt-0">
                     <span className="text-slate-400 line-through">${parseFloat(productPrice).toFixed(2)}</span>
                     <span className="font-bold text-green-600">${(parseFloat(productPrice) * (1 - parseFloat(discountPercent) / 100)).toFixed(2)}</span>
                   </div>
@@ -527,16 +529,30 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                 )}
 
                 {/* Actions */}
-                <div className="p-4 border-t border-slate-100 flex gap-3">
-                  <a 
-                    href={generatedImage} 
-                    download={`ad_${productName.replace(/\s+/g, "_")}.png`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                  <button 
+                    onClick={async () => {
+                      if (!generatedImage) return;
+                      try {
+                        const response = await fetch(generatedImage);
+                        const blob = await response.blob();
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = `lindasal_publicidad_${productName.replace(/\s+/g, "_")}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(blobUrl);
+                      } catch (error) {
+                        console.error("Error forzando descarga:", error);
+                        window.open(generatedImage, '_blank');
+                      }
+                    }}
                     className="flex-1 bg-navy text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-navy/80 transition-colors"
                   >
                     <i className="fa-solid fa-download"></i> Descargar Imagen
-                  </a>
+                  </button>
                   <button
                     onClick={() => {
                       if (generatedCaption) {
@@ -544,7 +560,7 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                         alert("✅ Caption copiado al portapapeles");
                       }
                     }}
-                    className="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors flex items-center gap-2"
+                    className="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
                   >
                     <i className="fa-solid fa-copy"></i> Copiar Texto
                   </button>
