@@ -52,9 +52,18 @@ export default function StoreClient() {
   useEffect(() => {
     async function loadProducts() {
       try {
-        const { data, error } = await supabase.from("productos").select("*").eq("is_active", true);
-        if (data && data.length > 0) {
-          setProducts(data);
+        const { data, error } = await supabase.from("productos").select("*");
+        if (error) throw error;
+        
+        if (data) {
+          // Filtramos en el cliente para evitar problemas con is_active = null en la base de datos
+          const activeProducts = data.filter(p => p.is_active !== false);
+          if (activeProducts.length > 0) {
+            setProducts(activeProducts);
+          } else if (data.length > 0) {
+            // Si hay productos en la BD pero ninguno está activo, no mostramos los mock
+            setProducts([]);
+          }
         }
       } catch (err) {
         console.error("Error loading products from Supabase", err);

@@ -42,7 +42,7 @@ export default function Hero() {
         <h1 className="font-heading text-[clamp(1.8rem,5vw,2.2rem)] md:text-[clamp(2rem,3.5vw,3rem)] font-bold text-pearl leading-[1.15] mb-6 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
           El Poder del Mar<br />
           <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent text-[1.1em]">
-            <em className="font-light italic lowercase tracking-wide">en tus <span className="normal-case">M</span>anos</em>
+            <em className="font-light italic tracking-wide">en tus Manos</em>
           </span>
         </h1>
 

@@ -142,28 +142,24 @@ export default function AdminProductosPage() {
       };
 
       if (editingId) {
-        // Prevent UUID errors by skipping Supabase for mock IDs
-        const isMockId = typeof editingId === 'string' && (editingId.startsWith('ls-') || editingId.startsWith('aq-') || editingId.startsWith('nv-') || editingId.startsWith('local-'));
-        
-        if (!isMockId) {
-          const { error } = await supabase.from("productos").update(productData).eq("id", editingId);
-          if (error) throw error;
-        }
+        const { error } = await supabase.from("productos").update(productData).eq("id", editingId);
+        if (error) throw error;
         
         setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
-        setSaveMsg({ type: "ok", text: isMockId ? "✅ Producto local actualizado." : "✅ Producto actualizado correctamente." });
+        setSaveMsg({ type: "ok", text: "✅ Producto actualizado correctamente en Supabase." });
       } else {
         const { data, error } = await supabase.from("productos").insert([productData]).select();
         if (error) throw error;
 
         if (data && data.length > 0) {
           setProducts(prev => [data[0], ...prev]);
-          setSaveMsg({ type: "ok", text: "✅ Producto agregado correctamente." });
+          setSaveMsg({ type: "ok", text: "✅ Producto agregado correctamente en Supabase." });
         }
       }
       setTimeout(() => closeModal(), 1500);
     } catch (err: any) {
       console.error(err);
+      alert("ERROR AL GUARDAR EN BASE DE DATOS: " + err.message + "\n\nAsegúrate de haber ejecutado el código SQL para desactivar RLS.");
       
       const mockImageUrl = imageFile ? URL.createObjectURL(imageFile) : (form.image_url || null);
       
@@ -183,9 +179,7 @@ export default function AdminProductosPage() {
       // Fallback: add to local state as mock
       if (editingId) {
         setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
-        // Only show actual network errors, not UUID mismatches if somehow bypassed
-        const errorMsg = err.message?.includes('uuid') ? 'Actualizado en memoria local.' : `⚠️ Actualizado localmente. ${err.message || "(Error de red)"}`;
-        setSaveMsg({ type: "ok", text: errorMsg });
+        setSaveMsg({ type: "error", text: `❌ Solo se guardó temporalmente. Error: ${err.message}` });
       } else {
         const mockId = `local-${Date.now()}`;
         const localProduct: Product = {
@@ -193,9 +187,9 @@ export default function AdminProductosPage() {
           ...productData
         };
         setProducts(prev => [localProduct, ...prev]);
-        setSaveMsg({ type: "ok", text: `⚠️ Guardado localmente. ${err.message || "(Error de red)"}` });
+        setSaveMsg({ type: "error", text: `❌ Solo se guardó temporalmente. Error: ${err.message}` });
       }
-      setTimeout(() => closeModal(), 2000);
+      setTimeout(() => closeModal(), 3000);
     } finally {
       setSaving(false);
     }
@@ -206,6 +200,62 @@ export default function AdminProductosPage() {
     (p.brand || "").toLowerCase().includes(search.toLowerCase())
   );
 
+  // Delete Product
+  const handleDelete = async (id: string, name: string) => {
+    if (!window.confirm(`¿Estás seguro de eliminar el producto "${name}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    try {
+      const { error } = await supabase.from("productos").delete().eq("id", id);
+      if (error) throw error;
+      setProducts(prev => prev.filter(p => p.id !== id));
+      // Mostrar alerta de éxito momentánea o usar el state de mensajes si tuvieras uno global
+      alert("✅ Producto eliminado correctamente");
+    } catch (err: any) {
+      console.error(err);
+      alert("ERROR AL ELIMINAR: " + err.message);
+    }
+  };
+
+  // Clean Duplicates
+  const handleCleanDuplicates = async () => {
+    if (!window.confirm("¿Limpiar productos duplicados? Se conservará solo una copia de cada producto con el mismo nombre.")) return;
+    
+    // Identificar duplicados
+    const seenNames = new Set<string>();
+    const duplicateIds: string[] = [];
+    
+    // Sort by created_at ascending to keep the oldest one
+    const sorted = [...products].sort((a, b) => new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime());
+    
+    for (const p of sorted) {
+      const normalizedName = p.name.trim().toLowerCase();
+      if (seenNames.has(normalizedName)) {
+        duplicateIds.push(p.id);
+      } else {
+        seenNames.add(normalizedName);
+      }
+    }
+    
+    if (duplicateIds.length === 0) {
+      alert("No se encontraron productos duplicados.");
+      return;
+    }
+    
+    try {
+      // Eliminar de supabase
+      const { error } = await supabase.from("productos").delete().in("id", duplicateIds);
+      if (error) throw error;
+      
+      // Actualizar estado local
+      setProducts(prev => prev.filter(p => !duplicateIds.includes(p.id)));
+      alert(`✅ Limpieza completada. Se eliminaron ${duplicateIds.length} productos duplicados.`);
+    } catch (err: any) {
+      console.error(err);
+      alert("ERROR AL LIMPIAR: " + err.message);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex justify-between items-end">
@@ -213,12 +263,21 @@ export default function AdminProductosPage() {
           <h1 className="text-3xl font-bold text-slate-800">Productos</h1>
           <p className="text-slate-500 mt-1">Gestiona tu catálogo de productos y precios.</p>
         </div>
-        <button
-          onClick={openModal}
-          className="bg-navy text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:bg-navy/80 transition-colors flex items-center gap-2"
-        >
-          <i className="fa-solid fa-plus"></i> Nuevo Producto
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleCleanDuplicates}
+            className="bg-slate-100 text-slate-600 px-4 py-2.5 rounded-xl font-medium shadow-sm hover:bg-slate-200 transition-colors flex items-center gap-2"
+            title="Eliminar duplicados automáticamente"
+          >
+            <i className="fa-solid fa-broom"></i> Limpiar Repetidos
+          </button>
+          <button
+            onClick={openModal}
+            className="bg-navy text-white px-5 py-2.5 rounded-xl font-medium shadow-sm hover:bg-navy/80 transition-colors flex items-center gap-2"
+          >
+            <i className="fa-solid fa-plus"></i> Nuevo Producto
+          </button>
+        </div>
       </header>
 
       {/* Search */}
@@ -314,6 +373,13 @@ export default function AdminProductosPage() {
                       title="Editar producto"
                     >
                       <i className="fa-solid fa-pen text-xs"></i>
+                    </button>
+                    <button
+                      onClick={() => handleDelete(p.id, p.name)}
+                      className="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center"
+                      title="Eliminar producto"
+                    >
+                      <i className="fa-solid fa-trash text-xs"></i>
                     </button>
                   </td>
                 </tr>

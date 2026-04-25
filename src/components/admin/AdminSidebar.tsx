@@ -15,7 +15,8 @@ export default function AdminSidebar() {
     { label: "Productos", href: "/admin/productos", icon: "fa-box-open" },
     { label: "Inventario", href: "/admin/inventario", icon: "fa-warehouse" },
     { label: "Ventas", href: "/admin/ventas", icon: "fa-cash-register" },
-    { label: "Redes Sociales (AI)", href: "/admin/social", icon: "fa-hashtag", isSpecial: true },
+    { label: "Publicidad (AI)", href: "/admin/social", icon: "fa-bullhorn", isSpecial: true },
+    { label: "Configuración", href: "/admin/config", icon: "fa-gear" },
   ];
 
   return (
