@@ -5,8 +5,8 @@ import { supabase } from "@/lib/supabase";
 
 const BRANDS = [
   { id: "LINDASAL", label: "Lindasal", color: "bg-[#c9a84c] text-white", hex: "#c9a84c" },
-  { id: "NAVELLA", label: "Navella", color: "bg-purple-600 text-white", hex: "#7c3aed" },
-  { id: "AGUADEMAR QUINTON", label: "Aguademar", color: "bg-teal text-white", hex: "#14b8a6" },
+  { id: "NAVELLA", label: "Navella", color: "bg-[#7c3aed] text-white", hex: "#7c3aed" },
+  { id: "AGUADEMAR QUINTON", label: "Aguademar", color: "bg-[#14b8a6] text-white", hex: "#14b8a6" },
 ];
 
 interface BrandLogos {
@@ -38,6 +38,33 @@ export default function AdminSocialPage() {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [generatedCaption, setGeneratedCaption] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  // History state
+  const [postHistory, setPostHistory] = useState<any[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
+  const loadHistory = async () => {
+    setIsLoadingHistory(true);
+    try {
+      const { data, error } = await supabase
+        .from("social_posts")
+        .select("id, image_url, caption, created_at, status")
+        .eq("user_id", "lindasal_master")
+        .order("created_at", { ascending: false });
+      
+      if (!error && data) {
+        setPostHistory(data);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsLoadingHistory(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHistory();
+  }, []);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -157,6 +184,10 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
             imageUrl: productImage,
             stock: "Disponible",
             usage: "",
+            brand: brand?.label || selectedBrand,
+            brandLogoUrl: brandLogoUrl,
+            hasDiscount: hasDiscount,
+            discountValue: discountPercent
           },
         }),
       });
@@ -173,6 +204,9 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
       if (result.post?.caption) {
         setGeneratedCaption(result.post.caption);
       }
+
+      // Refresh history with new image
+      await loadHistory();
     } catch (err: any) {
       console.error("Error:", err);
       setErrorMsg(err.message || "Error generando la imagen publicitaria.");
@@ -496,6 +530,54 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* HISTORY SECTION */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-2">
+        <div className="p-5 border-b border-slate-100 bg-slate-50">
+          <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+            <i className="fa-solid fa-clock-rotate-left text-navy"></i> Historial de Generaciones Recientes
+          </h2>
+        </div>
+        <div className="p-6">
+          {isLoadingHistory ? (
+            <div className="flex justify-center items-center py-12">
+              <div className="w-8 h-8 border-4 border-navy/20 border-t-navy rounded-full animate-spin"></div>
+            </div>
+          ) : postHistory.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {postHistory.map(post => (
+                <div key={post.id} className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm aspect-square bg-slate-100">
+                  {post.image_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={post.image_url} alt="Generado" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                      <i className="fa-solid fa-image"></i>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3">
+                    {post.image_url && (
+                      <button 
+                        onClick={() => {
+                          setGeneratedImage(post.image_url);
+                          setGeneratedCaption(post.caption || "");
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="bg-white text-slate-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-colors shadow-lg"
+                        title="Ver en Vista Previa"
+                      >
+                        <i className="fa-solid fa-arrow-up"></i>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-slate-500 py-8">Aún no hay imágenes generadas en el historial.</p>
+          )}
         </div>
       </div>
     </div>
