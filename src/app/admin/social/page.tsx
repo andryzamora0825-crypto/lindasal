@@ -62,6 +62,17 @@ export default function AdminSocialPage() {
     }
   };
 
+  const handleDeleteHistoryPost = async (id: string) => {
+    if (!confirm('¿Seguro que quieres eliminar esta imagen permanentemente del historial?')) return;
+    try {
+      const { error } = await supabase.from('social_posts').delete().eq('id', id);
+      if (error) throw error;
+      await loadHistory();
+    } catch (e: any) {
+      alert("Error eliminando: " + e.message);
+    }
+  };
+
   useEffect(() => {
     loadHistory();
   }, []);
@@ -559,17 +570,33 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                   )}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center gap-3">
                     {post.image_url && (
-                      <button 
-                        onClick={() => {
-                          setGeneratedImage(post.image_url);
-                          setGeneratedCaption(post.caption || "");
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }}
-                        className="bg-white text-slate-800 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-colors shadow-lg"
-                        title="Ver en Vista Previa"
-                      >
-                        <i className="fa-solid fa-arrow-up"></i>
-                      </button>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => window.open(post.image_url, '_blank')}
+                          className="bg-black/80 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-black transition-colors shadow-lg"
+                          title="Pantalla Completa"
+                        >
+                          <i className="fa-solid fa-expand text-sm"></i>
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setGeneratedImage(post.image_url);
+                            setGeneratedCaption(post.caption || "");
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="bg-white text-slate-800 w-9 h-9 rounded-full flex items-center justify-center hover:bg-gold hover:text-white transition-colors shadow-lg"
+                          title="Subir a Vista Previa principal"
+                        >
+                          <i className="fa-solid fa-arrow-up text-sm"></i>
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteHistoryPost(post.id)}
+                          className="bg-red-500/90 text-white w-9 h-9 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors shadow-lg"
+                          title="Eliminar del historial"
+                        >
+                          <i className="fa-solid fa-trash-can text-sm"></i>
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
