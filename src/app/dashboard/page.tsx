@@ -79,55 +79,55 @@ export default function DashboardPage() {
   return (
     <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="p-3.5 bg-gradient-to-br from-gold to-gold-light rounded-2xl shadow-[0_0_15px_rgba(201,168,76,0.3)]">
-          <BarChart3 className="w-7 h-7 text-navy" />
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div className="p-2.5 sm:p-3.5 bg-gradient-to-br from-gold to-gold-light rounded-xl sm:rounded-2xl shadow-[0_0_15px_rgba(201,168,76,0.3)]">
+          <BarChart3 className="w-5 h-5 sm:w-7 sm:h-7 text-navy" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-navy tracking-tight font-[family-name:var(--font-heading)]">
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy tracking-tight font-[family-name:var(--font-heading)]">
             Resumen General
           </h1>
-          <p className="text-gray-500 mt-0.5">Vista general del estado de tu tienda</p>
+          <p className="text-sm sm:text-base text-gray-500 mt-0.5">Vista general del estado de tu tienda</p>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((stat, i) => (
           <div
             key={i}
-            className="bg-white rounded-2xl p-5 border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] hover:shadow-[0_8px_24px_rgba(10,22,40,0.1)] hover:-translate-y-0.5 transition-all duration-300"
+            className="bg-white rounded-xl sm:rounded-2xl p-3 sm:p-5 border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] hover:shadow-[0_8px_24px_rgba(10,22,40,0.1)] hover:-translate-y-0.5 transition-all duration-300"
           >
-            <div className={`w-11 h-11 rounded-xl ${stat.color} border flex items-center justify-center mb-3`}>
-              <stat.icon className="w-5 h-5" />
+            <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl ${stat.color} border flex items-center justify-center mb-2 sm:mb-3`}>
+              <stat.icon className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <p className="text-2xl font-bold text-navy">{stat.value}</p>
-            <p className="text-xs text-gray-500 font-medium mt-0.5">{stat.label}</p>
+            <p className="text-xl sm:text-2xl font-bold text-navy">{stat.value}</p>
+            <p className="text-[0.65rem] sm:text-xs text-gray-500 font-medium mt-0.5">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Quick Actions + Recent */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Quick Actions */}
-        <div className="bg-white rounded-2xl border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] p-6">
-          <h3 className="font-bold text-navy text-lg mb-4 flex items-center gap-2">
-            <Boxes className="w-5 h-5 text-gold" />
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] p-4 sm:p-6">
+          <h3 className="font-bold text-navy text-base sm:text-lg mb-3 sm:mb-4 flex items-center gap-2">
+            <Boxes className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
             Acciones Rápidas
           </h3>
-          <div className="space-y-2.5">
+          <div className="space-y-2 sm:space-y-2.5">
             {quickActions.map((action, i) => (
               <Link
                 key={i}
                 href={action.href}
-                className="flex items-center gap-4 p-3.5 rounded-xl border border-pearl-dark hover:border-gold/30 hover:bg-pearl/50 hover:shadow-[0_4px_12px_rgba(10,22,40,0.06)] transition-all group"
+                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl border border-pearl-dark hover:border-gold/30 hover:bg-pearl/50 hover:shadow-[0_4px_12px_rgba(10,22,40,0.06)] transition-all group"
               >
-                <div className={`w-10 h-10 rounded-xl ${action.color} border flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
-                  <action.icon className="w-5 h-5" />
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl ${action.color} border flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform`}>
+                  <action.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-navy">{action.title}</p>
-                  <p className="text-xs text-gray-500">{action.desc}</p>
+                  <p className="text-xs sm:text-sm font-bold text-navy">{action.title}</p>
+                  <p className="text-[0.65rem] sm:text-xs text-gray-500">{action.desc}</p>
                 </div>
                 <span className="text-gray-300 group-hover:text-gold transition-colors">→</span>
               </Link>
@@ -136,10 +136,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Products */}
-        <div className="bg-white rounded-2xl border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-navy text-lg flex items-center gap-2">
-              <Package className="w-5 h-5 text-gold" />
+        <div className="bg-white rounded-xl sm:rounded-2xl border border-pearl-dark shadow-[0_1px_3px_rgba(10,22,40,0.06)] p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-3 sm:mb-4">
+            <h3 className="font-bold text-navy text-base sm:text-lg flex items-center gap-2">
+              <Package className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
               Últimos Productos
             </h3>
             <Link href="/dashboard/productos" className="text-xs text-gold font-bold hover:underline">

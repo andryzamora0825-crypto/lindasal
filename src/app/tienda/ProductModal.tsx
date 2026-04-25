@@ -23,7 +23,7 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true" aria-labelledby="modal-name">
       <div className="absolute inset-0 bg-navy/80 backdrop-blur-sm" onClick={onClose}></div>
       
-      <div className="relative bg-white w-full max-w-[900px] rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in-up">
+      <div className="relative bg-white w-full max-w-[900px] max-h-[95vh] rounded-2xl sm:rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-fade-in-up">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-white/50 backdrop-blur-md rounded-full text-navy border border-pearl hover:bg-gold hover:border-gold transition-colors"
@@ -33,7 +33,7 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
         </button>
 
         {/* Modal Image */}
-        <div className="w-full md:w-[45%] bg-[#f8f5f0] relative flex items-center justify-center min-h-[250px] p-8">
+        <div className="w-full md:w-[45%] bg-[#f8f5f0] relative flex items-center justify-center min-h-[200px] sm:min-h-[250px] p-4 sm:p-8">
           {product.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={product.image_url} alt={product.name} className="w-full h-full object-contain mix-blend-multiply" />
@@ -56,10 +56,10 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
         </div>
 
         {/* Modal Info */}
-        <div className="w-full md:w-[55%] p-6 md:p-10 flex flex-col max-h-[85vh] overflow-y-auto">
-          <span className="text-[0.7rem] font-bold tracking-[0.15em] text-gold uppercase mb-2">{product.category}</span>
-          <h2 id="modal-name" className="font-heading text-3xl md:text-4xl font-bold text-navy mb-2 leading-[1.15]">{product.name}</h2>
-          <div className="font-heading text-3xl font-bold bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent mb-6 flex items-end gap-3">
+        <div className="w-full md:w-[55%] p-5 sm:p-6 md:p-10 flex flex-col max-h-[60vh] md:max-h-[85vh] overflow-y-auto">
+          <span className="text-[0.65rem] sm:text-[0.7rem] font-bold tracking-[0.15em] text-gold uppercase mb-1 sm:mb-2">{product.category}</span>
+          <h2 id="modal-name" className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-navy mb-2 leading-[1.15]">{product.name}</h2>
+          <div className="font-heading text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent mb-4 sm:mb-6 flex items-end gap-2 sm:gap-3 flex-wrap">
             {product.discount_percentage && product.discount_percentage > 0 ? (
               <>
                 ${(product.price * (1 - product.discount_percentage / 100)).toFixed(2)}
@@ -71,7 +71,7 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
             )}
           </div>
           
-          <p className="text-navy-light/70 leading-[1.8] text-[0.95rem] mb-8">{product.description}</p>
+          <p className="text-navy-light/70 leading-[1.8] text-sm sm:text-[0.95rem] mb-4 sm:mb-8">{product.description}</p>
 
           <div className="flex flex-col gap-3 mb-8">
             <div className="flex items-center gap-3 text-sm text-navy font-semibold">

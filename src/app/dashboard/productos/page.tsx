@@ -89,16 +89,16 @@ export default function AdminProductosPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
-      <header className="flex justify-between items-end bg-white p-6 rounded-2xl border border-pearl-dark shadow-sm">
+      <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-pearl-dark shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold text-navy flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-navy flex items-center gap-2 sm:gap-3">
             <i className="fa-solid fa-box text-gold"></i> Productos
           </h1>
-          <p className="text-slate-500 mt-2">Gestiona el catálogo, categorías y precios de tu tienda.</p>
+          <p className="text-sm sm:text-base text-slate-500 mt-1 sm:mt-2">Gestiona el catálogo, categorías y precios de tu tienda.</p>
         </div>
         <button 
           onClick={openNewProduct}
-          className="bg-navy text-white px-5 py-2.5 rounded-xl font-medium shadow-[0_4px_15px_rgba(10,22,40,0.15)] hover:bg-navy-light hover:-translate-y-0.5 transition-all flex items-center gap-2"
+          className="bg-navy text-white px-5 py-2.5 rounded-xl font-medium shadow-[0_4px_15px_rgba(10,22,40,0.15)] hover:bg-navy-light hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <Plus className="w-5 h-5" /> Nuevo Producto
         </button>
@@ -110,10 +110,10 @@ export default function AdminProductosPage() {
             <Loader2 className="w-10 h-10 animate-spin" />
           </div>
         ) : products.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center">
-            <i className="fa-solid fa-box-open text-5xl text-slate-300 mb-4"></i>
-            <h3 className="text-xl font-bold text-slate-700 mb-2">No hay productos</h3>
-            <p className="text-slate-500 mb-6">Aún no has agregado ningún producto a tu base de datos Supabase.</p>
+          <div className="flex flex-col items-center justify-center p-8 sm:p-16 text-center">
+            <i className="fa-solid fa-box-open text-4xl sm:text-5xl text-slate-300 mb-4"></i>
+            <h3 className="text-lg sm:text-xl font-bold text-slate-700 mb-2">No hay productos</h3>
+            <p className="text-sm sm:text-base text-slate-500 mb-6">Aún no has agregado ningún producto a tu base de datos Supabase.</p>
             <button onClick={openNewProduct} className="text-navy font-bold hover:text-gold flex items-center gap-2">
               <Plus className="w-4 h-4" /> Agregar el primero
             </button>

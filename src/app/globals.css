@@ -90,3 +90,22 @@ body {
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+
+/* ── Scrollbar hide for horizontal scroll areas ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Fade in animation ── */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

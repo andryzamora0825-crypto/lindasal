@@ -32,11 +32,11 @@ export default function AdminVentasPage() {
 
   return (
     <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
-      <header className="bg-white p-6 rounded-2xl border border-pearl-dark shadow-sm">
-        <h1 className="text-3xl font-bold text-navy flex items-center gap-3">
-          <Receipt className="w-8 h-8 text-gold" /> Historial de Ventas
+      <header className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-pearl-dark shadow-sm">
+        <h1 className="text-2xl sm:text-3xl font-bold text-navy flex items-center gap-2 sm:gap-3">
+          <Receipt className="w-6 h-6 sm:w-8 sm:h-8 text-gold" /> Historial de Ventas
         </h1>
-        <p className="text-slate-500 mt-2">Revisa todos los pedidos realizados a través de la tienda y derivados a WhatsApp.</p>
+        <p className="text-sm sm:text-base text-slate-500 mt-1 sm:mt-2">Revisa todos los pedidos realizados a través de la tienda y derivados a WhatsApp.</p>
         
         {!loading && ventas.length > 0 && (
           <div className="flex flex-wrap gap-4 mt-6">
@@ -69,10 +69,10 @@ export default function AdminVentasPage() {
             <Loader2 className="w-10 h-10 animate-spin" />
           </div>
         ) : ventas.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 text-center">
-            <Receipt className="w-16 h-16 text-slate-300 mb-4" />
-            <h3 className="text-xl font-bold text-slate-700 mb-2">Aún no hay ventas</h3>
-            <p className="text-slate-500 max-w-[400px]">Cuando un cliente realice un pedido por la tienda, aparecerá guardado aquí.</p>
+          <div className="flex flex-col items-center justify-center p-8 sm:p-16 text-center">
+            <Receipt className="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 mb-4" />
+            <h3 className="text-lg sm:text-xl font-bold text-slate-700 mb-2">Aún no hay ventas</h3>
+            <p className="text-sm sm:text-base text-slate-500 max-w-[400px]">Cuando un cliente realice un pedido por la tienda, aparecerá guardado aquí.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">

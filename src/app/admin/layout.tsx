@@ -7,7 +7,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <ClerkProvider>
       <div className="flex min-h-screen bg-[#f1f5f9]">
         <AdminSidebar />
-        <main className="flex-1 md:ml-[260px] p-6 lg:p-10 transition-all w-full flex flex-col">
+        <main className="flex-1 md:ml-[260px] p-4 pt-16 md:pt-6 lg:p-10 transition-all w-full flex flex-col">
           <div className="w-full max-w-[1400px] mx-auto flex-1 flex flex-col">
             {children}
           </div>

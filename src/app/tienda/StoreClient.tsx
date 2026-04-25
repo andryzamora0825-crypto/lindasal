@@ -235,22 +235,22 @@ export default function StoreClient() {
       </button>
 
       {/* BRAND FILTER HERO TABS */}
-      <div className="w-full mb-8">
-        <p className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-4 text-center">Filtrar por Marca</p>
-        <div className="flex flex-wrap gap-3 justify-center">
+      <div className="w-full mb-6 sm:mb-8">
+        <p className="text-xs font-bold text-navy/40 uppercase tracking-widest mb-3 sm:mb-4 text-center">Filtrar por Marca</p>
+        <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto pb-2 px-1 scrollbar-hide">
           {BRANDS.map(brand => (
             <button
               key={brand.id}
               onClick={() => setActiveBrand(brand.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold border-2 transition-all flex items-center gap-2 shadow-sm ${
+              className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold border-2 transition-all flex items-center gap-1.5 sm:gap-2 shadow-sm whitespace-nowrap shrink-0 ${
                 activeBrand === brand.id ? brand.color : brand.inactiveColor
               }`}
             >
               {brand.dot && (
-                <span className={`w-2.5 h-2.5 rounded-full ${activeBrand === brand.id ? "bg-white/60" : brand.dot}`}></span>
+                <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${activeBrand === brand.id ? "bg-white/60" : brand.dot}`}></span>
               )}
               {brand.label}
-              <span className="text-[0.7rem] opacity-70">
+              <span className="text-[0.65rem] sm:text-[0.7rem] opacity-70">
                 ({products.filter(p => brand.id === "all" ? true : p.brand === brand.id).length})
               </span>
             </button>
@@ -408,7 +408,7 @@ export default function StoreClient() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
               {filteredProducts.map(product => (
                 <ProductCard 
                   key={product.id} 

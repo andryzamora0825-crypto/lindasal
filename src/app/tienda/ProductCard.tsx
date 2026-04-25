@@ -52,7 +52,7 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10 items-start">
           {/* Brand badge */}
           {brandStyle && (
-            <span className={`${brandStyle.bg} ${brandStyle.text} text-[0.6rem] font-extrabold tracking-[0.12em] uppercase px-2.5 py-1 rounded-md shadow-sm`}>
+            <span className={`${brandStyle.bg} ${brandStyle.text} text-[0.5rem] sm:text-[0.6rem] font-extrabold tracking-[0.12em] uppercase px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-md shadow-sm`}>
               {brandStyle.label}
             </span>
           )}
@@ -92,23 +92,23 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
         </div>
       </div>
 
-      <div className="p-6 flex flex-col flex-1">
-        <h3 className="font-heading font-semibold text-xl text-navy mb-1 leading-tight line-clamp-2 min-h-[50px]">{product.name}</h3>
-        <p className="text-navy-light/60 text-sm line-clamp-2 mb-4 leading-relaxed">{product.description}</p>
+      <div className="p-3 sm:p-6 flex flex-col flex-1">
+        <h3 className="font-heading font-semibold text-sm sm:text-xl text-navy mb-1 leading-tight line-clamp-2 min-h-[36px] sm:min-h-[50px]">{product.name}</h3>
+        <p className="text-navy-light/60 text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-4 leading-relaxed hidden sm:block">{product.description}</p>
         
         {/* Price section with discount logic */}
-        <div className="mb-5 mt-auto flex items-end gap-2">
+        <div className="mb-3 sm:mb-5 mt-auto flex items-end gap-1 sm:gap-2">
           {product.discount_percentage && product.discount_percentage > 0 ? (
             <>
-              <span className="font-heading font-bold text-2xl text-navy">
+              <span className="font-heading font-bold text-lg sm:text-2xl text-navy">
                 ${(product.price * (1 - product.discount_percentage / 100)).toFixed(2)}
               </span>
-              <span className="font-heading font-medium text-lg text-slate-400 line-through mb-0.5">
+              <span className="font-heading font-medium text-xs sm:text-lg text-slate-400 line-through mb-0.5">
                 ${product.price.toFixed(2)}
               </span>
             </>
           ) : (
-            <span className="font-heading font-bold text-2xl text-navy">
+            <span className="font-heading font-bold text-lg sm:text-2xl text-navy">
               ${product.price.toFixed(2)}
             </span>
           )}
@@ -119,9 +119,9 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
             e.stopPropagation();
             onAdd();
           }}
-          className="w-full bg-gradient-to-r from-navy to-navy/90 hover:from-navy border border-navy text-pearl font-medium py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2 group-hover:bg-gold group-hover:border-gold group-hover:text-navy"
+          className="w-full bg-gradient-to-r from-navy to-navy/90 hover:from-navy border border-navy text-pearl font-medium py-2 sm:py-3 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2 group-hover:bg-gold group-hover:border-gold group-hover:text-navy text-xs sm:text-base"
         >
-          <i className="fa-solid fa-bag-shopping"></i> Agregar
+          <i className="fa-solid fa-bag-shopping"></i> <span className="hidden sm:inline">Agregar</span><span className="sm:hidden">+</span>
         </button>
       </div>
     </article>
