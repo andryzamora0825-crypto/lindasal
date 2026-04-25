@@ -13,6 +13,7 @@ export const mockProducts: Product[] = [
     stock: 80,
     is_featured: true,
     is_active: true,
+    discount_percentage: 20,
   },
   {
     id: "ls-2",

@@ -69,12 +69,17 @@ export default function ProductCard({ product, onQuickView, onAdd }: ProductCard
               <i className="fa-solid fa-star text-[0.55rem]"></i> Destacado
             </span>
           )}
-          {product.discount_percentage && product.discount_percentage > 0 ? (
-            <span className="bg-red-500/90 backdrop-blur-sm text-[0.7rem] font-bold tracking-wider uppercase text-white px-2.5 py-1 rounded-md shadow-sm flex items-center gap-1 border border-red-400">
-              -{product.discount_percentage}% OFF
-            </span>
-          ) : null}
         </div>
+
+        {/* Premium Discount Badge - Top Right Corner */}
+        {product.discount_percentage && product.discount_percentage > 0 ? (
+          <div className="absolute top-3 right-3 z-10">
+            <div className="flex flex-col items-center justify-center w-[3.25rem] h-[3.25rem] bg-gradient-to-br from-[#c9a84c] to-[#9c813b] rounded-full shadow-[0_4px_12px_rgba(201,168,76,0.3)] border border-white/40 transform hover:rotate-3 transition-transform">
+              <span className="text-navy font-heading font-extrabold text-[0.95rem] leading-none">-{product.discount_percentage}%</span>
+              <span className="text-navy/90 text-[0.55rem] font-extrabold tracking-widest uppercase mt-0.5 leading-none">OFF</span>
+            </div>
+          </div>
+        ) : null}
 
         {/* Hover overlay for quick view */}
         <div className="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20 flex items-center justify-center backdrop-blur-[2px]">

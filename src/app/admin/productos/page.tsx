@@ -15,7 +15,7 @@ const EMPTY_FORM = {
   is_featured: false,
   is_active: true,
   image_url: "",
-  discount_percentage: 0,
+  discount_percentage: "",
 };
 
 const BRAND_COLORS: Record<string, string> = {
@@ -74,7 +74,7 @@ export default function AdminProductosPage() {
       is_featured: product.is_featured,
       is_active: product.is_active,
       image_url: product.image_url || "",
-      discount_percentage: product.discount_percentage || 0,
+      discount_percentage: product.discount_percentage?.toString() || "",
     });
     setEditingId(product.id);
     setImageFile(null);
@@ -142,11 +142,16 @@ export default function AdminProductosPage() {
       };
 
       if (editingId) {
-        const { error } = await supabase.from("productos").update(productData).eq("id", editingId);
-        if (error) throw error;
+        // Prevent UUID errors by skipping Supabase for mock IDs
+        const isMockId = typeof editingId === 'string' && (editingId.startsWith('ls-') || editingId.startsWith('aq-') || editingId.startsWith('nv-') || editingId.startsWith('local-'));
+        
+        if (!isMockId) {
+          const { error } = await supabase.from("productos").update(productData).eq("id", editingId);
+          if (error) throw error;
+        }
         
         setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
-        setSaveMsg({ type: "ok", text: "✅ Producto actualizado correctamente." });
+        setSaveMsg({ type: "ok", text: isMockId ? "✅ Producto local actualizado." : "✅ Producto actualizado correctamente." });
       } else {
         const { data, error } = await supabase.from("productos").insert([productData]).select();
         if (error) throw error;
@@ -178,7 +183,9 @@ export default function AdminProductosPage() {
       // Fallback: add to local state as mock
       if (editingId) {
         setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
-        setSaveMsg({ type: "ok", text: `⚠️ Actualizado localmente. ${err.message || "(Error de red)"}` });
+        // Only show actual network errors, not UUID mismatches if somehow bypassed
+        const errorMsg = err.message?.includes('uuid') ? 'Actualizado en memoria local.' : `⚠️ Actualizado localmente. ${err.message || "(Error de red)"}`;
+        setSaveMsg({ type: "ok", text: errorMsg });
       } else {
         const mockId = `local-${Date.now()}`;
         const localProduct: Product = {

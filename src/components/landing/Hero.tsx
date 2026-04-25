@@ -40,9 +40,9 @@ export default function Hero() {
         </div>
 
         <h1 className="font-heading text-[clamp(1.8rem,5vw,2.2rem)] md:text-[clamp(2rem,3.5vw,3rem)] font-bold text-pearl leading-[1.15] mb-6 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
-          EL PODER DEL<br className="hidden md:block" />{" "}
-          <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent">
-            <em className="font-light italic">MAR EN TUS MANOS</em>
+          El Poder del Mar<br />
+          <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent text-[1.1em]">
+            <em className="font-light italic lowercase tracking-wide">en tus manos</em>
           </span>
         </h1>
 
