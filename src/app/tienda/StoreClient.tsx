@@ -233,14 +233,11 @@ export default function StoreClient() {
         )}
       </motion.button>
 
-      <div className="mb-10 sm:mb-14">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
-          <div>
-            <span className="eyebrow mb-3">Nuestra coleccion</span>
-            <h2 className="font-display text-4xl sm:text-5xl text-navy">
-              Productos <span className="italic gradient-text-warm">disponibles</span>
-            </h2>
-          </div>
+      <div className="mb-6 sm:mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
+          <h2 className="font-display text-2xl sm:text-3xl text-navy">
+            Productos <span className="italic gradient-text-warm">disponibles</span>
+          </h2>
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative flex-1 lg:flex-initial lg:w-72">
@@ -345,9 +342,9 @@ export default function StoreClient() {
         </div>
       </div>
 
-      <div className="flex items-baseline justify-between mb-8 pb-5 border-b border-pearl-dark/60">
+      <div className="flex items-baseline justify-between mb-6 pb-4 border-b border-pearl-dark/60">
         <p className="text-sm text-navy/60">
-          <span className="font-heading text-2xl text-navy mr-2">{filteredProducts.length}</span>
+          <span className="font-heading text-xl text-navy mr-2">{filteredProducts.length}</span>
           producto{filteredProducts.length !== 1 ? "s" : ""}
           {activeBrand !== "all" && (
             <span className="text-gold-dark italic ml-2">en {activeBrand}</span>

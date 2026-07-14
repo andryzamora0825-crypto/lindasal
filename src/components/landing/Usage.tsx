@@ -52,7 +52,7 @@ export default function Usage() {
 
         <div className="max-w-[900px] mx-auto relative min-h-[400px]">
           {/* BEBIDA ISOTÓNICA */}
-          <div className={`transition-all duration-500 absolute w-full ${activeTab === 'isotonica' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
+          <div className={`transition-all duration-500 w-full ${activeTab === 'isotonica' ? 'relative opacity-100 translate-y-0 z-10' : 'absolute inset-x-0 top-0 opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
             <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="font-heading text-[1.7rem] font-bold text-navy mb-2">Bebida Isotónica Lindasal</h3>
               <p className="text-[0.9rem] text-navy/55 leading-[1.7] mb-8">
@@ -101,7 +101,7 @@ export default function Usage() {
           </div>
 
           {/* BEBIDA ENERGÉTICA */}
-          <div className={`transition-all duration-500 absolute w-full ${activeTab === 'energetica' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
+          <div className={`transition-all duration-500 w-full ${activeTab === 'energetica' ? 'relative opacity-100 translate-y-0 z-10' : 'absolute inset-x-0 top-0 opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
             <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="font-heading text-[1.7rem] font-bold text-navy mb-2">Bebida Energética y Preventora</h3>
               <p className="text-[0.9rem] text-navy/55 leading-[1.7] mb-8">
@@ -143,7 +143,7 @@ export default function Usage() {
           </div>
 
           {/* ENJUAGUE BUCAL */}
-          <div className={`transition-all duration-500 absolute w-full ${activeTab === 'enjuague' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
+          <div className={`transition-all duration-500 w-full ${activeTab === 'enjuague' ? 'relative opacity-100 translate-y-0 z-10' : 'absolute inset-x-0 top-0 opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
             <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="font-heading text-[1.7rem] font-bold text-navy mb-2">Enjuague Bucal Antibacterial</h3>
               <p className="text-[0.9rem] text-navy/55 leading-[1.7] mb-8">
@@ -173,7 +173,7 @@ export default function Usage() {
           </div>
 
           {/* ATM */}
-          <div className={`transition-all duration-500 absolute w-full ${activeTab === 'atm' ? 'opacity-100 translate-y-0 z-10' : 'opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
+          <div className={`transition-all duration-500 w-full ${activeTab === 'atm' ? 'relative opacity-100 translate-y-0 z-10' : 'absolute inset-x-0 top-0 opacity-0 translate-y-4 -z-10 pointer-events-none'}`}>
             <div className="bg-white/70 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
               <h3 className="font-heading text-[1.7rem] font-bold text-navy mb-2">ATM — Aceite de Magnesio</h3>
               <p className="text-[0.9rem] text-navy/55 leading-[1.7] mb-8">

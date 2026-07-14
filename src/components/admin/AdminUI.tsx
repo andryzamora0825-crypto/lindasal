@@ -76,7 +76,7 @@ export function PageHeader({
     >
       <div>
         <span className="eyebrow mb-2">{eyebrow}</span>
-        <h1 className="font-display text-4xl sm:text-5xl text-navy">
+        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-navy">
           {title}{" "}
           {accent && <span className="italic gradient-text-warm">{accent}</span>}
         </h1>
@@ -126,23 +126,23 @@ export function KpiCard({
       animate="visible"
       whileHover={{ y: -4 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative overflow-hidden bg-white rounded-2xl p-5 border border-pearl-dark/70 shadow-soft hover:shadow-raised hover:border-gold/30 transition-[box-shadow,border-color] duration-500"
+      className="group relative overflow-hidden bg-white rounded-2xl p-4 sm:p-5 border border-pearl-dark/70 shadow-soft hover:shadow-raised hover:border-gold/30 transition-[box-shadow,border-color] duration-500"
     >
       <div
         aria-hidden="true"
         className={`absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gradient-to-br ${t.glow} to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700`}
       />
-      <div className="relative flex items-center gap-4">
+      <div className="relative flex items-center gap-3 sm:gap-4">
         <div
-          className={`w-12 h-12 shrink-0 rounded-xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 ${t.chip}`}
+          className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3 ${t.chip}`}
         >
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="text-[0.62rem] font-bold text-navy/40 uppercase tracking-[0.18em] mb-1 truncate">
+          <p className="text-[0.58rem] sm:text-[0.62rem] font-bold text-navy/40 uppercase tracking-[0.16em] mb-1 truncate">
             {label}
           </p>
-          <p className="font-heading text-[1.75rem] leading-none text-navy tabular-nums">
+          <p className="font-heading text-2xl sm:text-[1.75rem] leading-none text-navy tabular-nums">
             <AnimatedNumber value={value} format={format} />
           </p>
           {hint && <p className="text-[0.65rem] text-navy/40 mt-1 truncate">{hint}</p>}
@@ -181,7 +181,7 @@ export function Panel({
       className={`bg-white rounded-3xl border border-pearl-dark/70 shadow-soft overflow-hidden ${className}`}
     >
       {(title || actions) && (
-        <div className="px-6 py-4.5 border-b border-pearl-dark/50 bg-gradient-to-r from-pearl/60 to-transparent flex items-center justify-between gap-4 flex-wrap">
+        <div className="px-4 sm:px-6 py-4 border-b border-pearl-dark/50 bg-gradient-to-r from-pearl/60 to-transparent flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
           <div className="flex items-center gap-3">
             {icon && (
               <span className="w-9 h-9 rounded-xl bg-navy text-gold flex items-center justify-center shrink-0">

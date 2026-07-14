@@ -223,7 +223,7 @@ export default function AdminVentasPage() {
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <KpiCard
           index={1}
           icon={<Landmark className="w-5 h-5" strokeWidth={1.75} />}
@@ -273,7 +273,7 @@ export default function AdminVentasPage() {
           />
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-pearl-dark/50 bg-pearl/40">
                   <th className="text-left px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Fecha / Cliente</th>

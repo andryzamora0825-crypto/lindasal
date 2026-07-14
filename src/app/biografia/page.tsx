@@ -273,20 +273,26 @@ function MagazineNav() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-body text-[0.72rem] font-semibold text-pearl/80 transition-all hover:border-gold/40 hover:bg-white/10 hover:text-pearl"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-body text-[0.72rem] font-semibold text-pearl/80 transition-all hover:border-gold/40 hover:bg-white/10 hover:text-pearl"
           >
             <ArrowLeft aria-hidden="true" className="h-3 w-3" />
             <span>Inicio</span>
           </Link>
           <Link
+            href="/feed"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-body text-[0.72rem] font-semibold text-pearl/80 transition-all hover:border-gold/40 hover:bg-white/10 hover:text-pearl"
+          >
+            <span>Feed</span>
+          </Link>
+          <Link
             href="/tienda"
-            className="hidden items-center gap-1.5 rounded-full bg-gold px-3.5 py-1.5 font-body text-[0.72rem] font-bold text-navy transition-all hover:-translate-y-0.5 hover:bg-gold-light sm:inline-flex"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gold px-3 py-1.5 font-body text-[0.72rem] font-bold text-navy transition-all hover:-translate-y-0.5 hover:bg-gold-light"
           >
             <ShoppingBag aria-hidden="true" className="h-3 w-3" />
-            <span>Tienda</span>
+            <span className="hidden sm:inline">Tienda</span>
           </Link>
         </div>
       </div>

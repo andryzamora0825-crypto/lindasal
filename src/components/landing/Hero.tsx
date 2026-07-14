@@ -37,6 +37,9 @@ export default function Hero() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/80 to-navy/30" aria-hidden="true" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-transparent to-transparent" aria-hidden="true" />
+      {/* En móvil la imagen queda detrás del titular: se refuerza el oscurecimiento */}
+      <div className="absolute inset-0 md:hidden bg-navy-deep/55" aria-hidden="true" />
+      <div className="absolute inset-x-0 top-0 h-48 md:hidden bg-gradient-to-b from-navy-deep via-navy-deep/60 to-transparent" aria-hidden="true" />
       <div className="absolute inset-0 texture-grain" aria-hidden="true" />
 
       <div className="absolute -top-10 -right-20 w-[520px] h-[520px] rounded-full bg-gold/[0.06] blur-[140px] pointer-events-none animate-float-slow" />

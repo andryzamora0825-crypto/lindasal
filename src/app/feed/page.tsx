@@ -204,7 +204,7 @@ function PostMosaicCard({
                 <Sparkles aria-hidden="true" className="h-2.5 w-2.5" />
                 Reflexión
               </span>
-              <p className="font-heading text-[1.4rem] leading-[1.25] text-pearl sm:text-[1.6rem]">
+              <p className="font-heading text-[1.05rem] leading-[1.45] text-pearl sm:text-[1.2rem]">
                 &ldquo;{truncated}&rdquo;
               </p>
               <div className="mt-5 flex items-center justify-between border-t border-pearl/10 pt-4">
@@ -273,9 +273,9 @@ function FeaturedPost({ post }: { post: FeedPost }) {
         <div className="relative flex flex-col justify-between gap-8 p-8 lg:col-span-2 lg:p-12">
           <div>
             <span className="eyebrow mb-5 text-gold">Última publicación</span>
-            <p className="font-heading text-[1.6rem] leading-[1.2] text-navy sm:text-[1.9rem] lg:text-[2.1rem]">
-              {post.content.length > 220
-                ? post.content.slice(0, 217) + "…"
+            <p className="font-heading text-[1.15rem] leading-[1.45] text-navy sm:text-[1.35rem] lg:text-[1.5rem]">
+              {post.content.length > 200
+                ? post.content.slice(0, 197) + "…"
                 : post.content}
             </p>
           </div>
@@ -394,15 +394,23 @@ export default function FeedPage() {
             <span className="hidden sm:inline">Inicio</span>
           </Link>
 
-          <div className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className="h-1.5 w-1.5 rounded-full bg-gold"
-            />
-            <span className="font-body text-[0.65rem] uppercase tracking-[0.22em] text-navy/55">
-              Lindasal Diario
+          <nav className="flex items-center gap-1.5 sm:gap-2" aria-label="Secciones del sitio">
+            <Link
+              href="/tienda"
+              className="rounded-full border border-navy/10 bg-white/70 px-3 py-1.5 font-body text-xs font-semibold text-navy/70 backdrop-blur transition-all hover:border-gold/30 hover:bg-white hover:text-navy"
+            >
+              Tienda
+            </Link>
+            <Link
+              href="/biografia"
+              className="rounded-full border border-navy/10 bg-white/70 px-3 py-1.5 font-body text-xs font-semibold text-navy/70 backdrop-blur transition-all hover:border-gold/30 hover:bg-white hover:text-navy"
+            >
+              Biografía
+            </Link>
+            <span className="rounded-full bg-gold/15 border border-gold/30 px-3 py-1.5 font-body text-xs font-bold text-gold-dark">
+              Feed
             </span>
-          </div>
+          </nav>
 
           <a
             href={INSTAGRAM_URL}
@@ -425,7 +433,7 @@ export default function FeedPage() {
           className="max-w-3xl"
         >
           <span className="eyebrow text-gold">Feed editorial</span>
-          <h1 className="mt-5 font-heading text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] text-navy">
+          <h1 className="mt-5 font-heading text-[clamp(2.25rem,5vw,3.75rem)] leading-[1.05] text-navy">
             Bitácora desde el{" "}
             <span className="italic gradient-text-warm">manantial.</span>
           </h1>

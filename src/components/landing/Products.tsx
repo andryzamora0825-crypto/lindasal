@@ -51,7 +51,7 @@ const products: Product[] = [
     tagline: "El plasma del mar, dentro de ti.",
     description:
       "Agua de mar hipertónica e isotónica rica en electrolitos. El complemento ideal para regular el balance celular de tu cuerpo al instante.",
-    features: ["Terapéutica 1 L · Hipertónica", "Rehidratante 1 L · Isotónica", "Restaura plasma", "Energía profunda"],
+    features: ["Terapéutica 1 L · Hipertónica", "Rehidratante 1 L · Isotónica", "Aceite de Magnesio", "Restaura plasma", "Energía profunda"],
     badge: "Máxima energía",
     surface: "navy",
     accent: "teal",
