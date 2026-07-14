@@ -30,16 +30,22 @@ export default function Hero() {
       className="relative min-h-[100svh] w-full overflow-hidden bg-navy-deep text-pearl flex items-end md:items-center"
       aria-label="Sección principal Lindasal"
     >
+      {/* La foto de fondo tiene texto impreso que ensucia el layout en pantallas
+          angostas: solo se muestra en md+, donde el degradado lateral la controla. */}
       <motion.div
         style={{ y: bgY, scale: bgScale, backgroundImage: `url('${bgImage.src}')` }}
-        className="absolute inset-0 bg-cover bg-center will-change-transform"
+        className="absolute inset-0 hidden md:block bg-cover bg-center will-change-transform"
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/80 to-navy/30" aria-hidden="true" />
-      <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-transparent to-transparent" aria-hidden="true" />
-      {/* En móvil la imagen queda detrás del titular: se refuerza el oscurecimiento */}
-      <div className="absolute inset-0 md:hidden bg-navy-deep/55" aria-hidden="true" />
-      <div className="absolute inset-x-0 top-0 h-48 md:hidden bg-gradient-to-b from-navy-deep via-navy-deep/60 to-transparent" aria-hidden="true" />
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-r from-navy-deep via-navy-deep/80 to-navy/30" aria-hidden="true" />
+      <div className="absolute inset-0 hidden md:block bg-gradient-to-t from-navy-deep via-transparent to-transparent" aria-hidden="true" />
+
+      {/* Fondo limpio para móvil: gradiente de marca + resplandores */}
+      <div
+        className="absolute inset-0 md:hidden bg-[radial-gradient(ellipse_at_top_right,rgba(126,202,195,0.14),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(201,168,76,0.12),transparent_55%),linear-gradient(180deg,#050d1a_0%,#0a1628_55%,#050d1a_100%)]"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 md:hidden bg-dots opacity-[0.15] mix-blend-overlay" aria-hidden="true" />
       <div className="absolute inset-0 texture-grain" aria-hidden="true" />
 
       <div className="absolute -top-10 -right-20 w-[520px] h-[520px] rounded-full bg-gold/[0.06] blur-[140px] pointer-events-none animate-float-slow" />
@@ -130,6 +136,28 @@ export default function Hero() {
               <Stat number="03" label="Líneas orgánicas" />
               <Stat number="86" label="Años de herencia" />
               <Stat number="60%" label="Minerales naturales" />
+            </motion.div>
+
+            {/* En móvil la foto se muestra como pieza gráfica enmarcada */}
+            <motion.div
+              variants={reveal}
+              custom={7}
+              initial="hidden"
+              animate="visible"
+              className="mt-10 md:hidden"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden rounded-3xl border border-pearl/10 shadow-floating">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={bgImage.src}
+                  alt="Lindasal — Flor de Sal del Ecuador"
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div
+                  className="absolute inset-0 bg-gradient-to-t from-navy-deep/60 via-transparent to-transparent"
+                  aria-hidden="true"
+                />
+              </div>
             </motion.div>
           </div>
 
