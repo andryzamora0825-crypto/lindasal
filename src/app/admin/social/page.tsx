@@ -1,7 +1,36 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Bot,
+  Palette,
+  ChevronDown,
+  ImageIcon,
+  CloudUpload,
+  Camera,
+  WandSparkles,
+  Zap,
+  Eye,
+  Info,
+  CircleAlert,
+  Download,
+  Copy,
+  Trash2,
+  Expand,
+  History,
+  ArrowUp,
+  User,
+  Loader2,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import {
+  PageHeader,
+  Panel,
+  fadeUp,
+  staggerContainer,
+  rowVariant,
+} from "@/components/admin/AdminUI";
 
 const BRANDS = [
   { id: "LINDASAL", label: "Lindasal", color: "bg-[#c9a84c] text-white", hex: "#c9a84c" },
@@ -14,6 +43,11 @@ interface BrandLogos {
   NAVELLA: string;
   "AGUADEMAR QUINTON": string;
 }
+
+const labelClass =
+  "text-[0.62rem] font-bold text-navy/50 uppercase tracking-[0.18em] mb-2 block";
+const inputClass =
+  "w-full border border-pearl-dark/70 rounded-xl p-3 text-sm bg-pearl/30 placeholder:text-navy/35 focus:outline-none focus:border-gold/60 focus:ring-1 focus:ring-gold/30 focus:bg-white transition-all duration-300";
 
 export default function AdminSocialPage() {
   // Form state
@@ -54,7 +88,7 @@ export default function AdminSocialPage() {
         .select("id, image_url, caption, created_at, status")
         .eq("user_id", "lindasal_master")
         .order("created_at", { ascending: false });
-      
+
       if (!error && data) {
         setPostHistory(data);
       }
@@ -90,7 +124,7 @@ export default function AdminSocialPage() {
           .from("configuracion")
           .select("key, value")
           .in("key", ["logo_LINDASAL", "logo_NAVELLA", "logo_AGUADEMAR QUINTON"]);
-        
+
         if (data) {
           const logos: any = { ...brandLogos };
           data.forEach((item: any) => {
@@ -139,7 +173,7 @@ export default function AdminSocialPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setProductImageFile(file);
-    
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       setProductImage(ev.target?.result as string);
@@ -164,8 +198,8 @@ export default function AdminSocialPage() {
     setGeneratedCaption("");
 
     const brand = BRANDS.find(b => b.id === selectedBrand);
-    const finalPrice = hasDiscount && discountPercent 
-      ? (parseFloat(productPrice) * (1 - parseFloat(discountPercent) / 100)).toFixed(2) 
+    const finalPrice = hasDiscount && discountPercent
+      ? (parseFloat(productPrice) * (1 - parseFloat(discountPercent) / 100)).toFixed(2)
       : productPrice;
     const brandLogoUrl = brandLogos[selectedBrand as keyof BrandLogos];
 
@@ -174,7 +208,7 @@ export default function AdminSocialPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic: `Crea una imagen publicitaria PROFESIONAL para redes sociales del producto "${productName}" de la marca ${brand?.label || selectedBrand}. 
+          topic: `Crea una imagen publicitaria PROFESIONAL para redes sociales del producto "${productName}" de la marca ${brand?.label || selectedBrand}.
 Precio: $${productPrice}${hasDiscount && discountPercent ? ` (ANTES $${productPrice}, AHORA $${finalPrice} — ${discountPercent}% de descuento)` : ""}.
 Descripción: ${productDesc || "Producto premium de alta calidad"}.
 Colores de marca: ${brand?.hex || "#c9a84c"}.
@@ -207,13 +241,13 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
       });
 
       const result = await response.json();
-      
+
       if (!response.ok || result.error) {
         let errMsg = "Error generando la imagen.";
         if (typeof result.error === "string") errMsg = result.error;
         else if (result.error?.message) errMsg = result.error.message;
         else if (result.error) errMsg = JSON.stringify(result.error);
-        
+
         throw new Error(errMsg);
       }
 
@@ -235,104 +269,146 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-end gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">Publicidad de Productos</h1>
-          <p className="text-sm sm:text-base text-slate-500 mt-1">Genera imágenes publicitarias profesionales con IA para tus redes sociales.</p>
-        </div>
-        <div className="bg-teal/10 text-teal-700 px-4 py-2 border border-teal-200 rounded-xl text-sm font-semibold flex items-center gap-2">
-          <i className="fa-solid fa-robot"></i> Gemini AI
-        </div>
-      </header>
+    <div className="flex flex-col gap-7">
+      <PageHeader
+        eyebrow="Marketing"
+        title="Publicidad de"
+        accent="productos."
+        subtitle="Genera imágenes publicitarias profesionales con IA para tus redes sociales."
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1], delay: 0.3 }}
+          className="bg-teal/10 text-teal-dark px-4 py-2 border border-teal/25 rounded-full text-sm font-bold flex items-center gap-2"
+        >
+          <Bot className="w-4 h-4 animate-float" strokeWidth={1.75} /> Gemini AI
+        </motion.div>
+      </PageHeader>
 
       {/* BRAND LOGOS CONFIG (COLLAPSIBLE) */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <button 
+      <Panel index={1}>
+        <button
           onClick={() => setShowLogosConfig(!showLogosConfig)}
-          className="w-full p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between hover:bg-slate-100 transition-colors"
+          className="w-full px-6 py-5 flex items-center justify-between hover:bg-pearl/30 transition-colors duration-300 group"
         >
-          <div className="text-left">
-            <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-              <i className="fa-solid fa-palette text-gold"></i> Ajustes de Logos
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">Sube los logos PNG sin fondo para cada marca.</p>
+          <div className="text-left flex items-center gap-3">
+            <span className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 text-gold-dark flex items-center justify-center transition-transform duration-500 group-hover:-rotate-6">
+              <Palette className="w-4 h-4" strokeWidth={1.75} />
+            </span>
+            <div>
+              <h2 className="font-heading text-xl text-navy leading-tight">Ajustes de logos</h2>
+              <p className="text-xs text-navy/45 mt-0.5">Sube los logos PNG sin fondo para cada marca.</p>
+            </div>
           </div>
-          <i className={`fa-solid fa-chevron-${showLogosConfig ? 'up' : 'down'} text-slate-400`}></i>
+          <motion.span
+            animate={{ rotate: showLogosConfig ? 180 : 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="text-navy/40"
+          >
+            <ChevronDown className="w-4 h-4" />
+          </motion.span>
         </button>
 
-        {showLogosConfig && (
-          <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in">
-            {BRANDS.map(brand => (
-              <div key={brand.id} className="flex flex-col items-center gap-3">
-                <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
-                  {brandLogos[brand.id as keyof BrandLogos] ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img 
-                      src={brandLogos[brand.id as keyof BrandLogos]} 
-                      alt={brand.label} 
-                      className="w-full h-full object-contain p-2"
-                    />
-                  ) : (
-                    <i className="fa-solid fa-image text-2xl text-slate-300"></i>
-                  )}
-                </div>
-                <span className={`text-[0.65rem] font-extrabold uppercase tracking-wider px-3 py-1 rounded-full ${brand.color}`}>
-                  {brand.label}
-                </span>
-                <label className="text-xs font-bold text-slate-500 cursor-pointer hover:text-navy transition-colors flex items-center gap-1">
-                  <i className="fa-solid fa-cloud-arrow-up"></i>
-                  {brandLogos[brand.id as keyof BrandLogos] ? "Cambiar" : "Subir PNG"}
-                  <input 
-                    type="file" 
-                    accept="image/png,image/webp"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleUploadBrandLogo(brand.id, file);
-                    }}
-                  />
-                </label>
+        <AnimatePresence initial={false}>
+          {showLogosConfig && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="p-6 border-t border-pearl-dark/50 grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {BRANDS.map((brand, i) => (
+                  <motion.div
+                    key={brand.id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex flex-col items-center gap-3"
+                  >
+                    <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-pearl-dark bg-pearl/40 flex items-center justify-center overflow-hidden hover:border-gold/50 transition-colors duration-300">
+                      {brandLogos[brand.id as keyof BrandLogos] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={brandLogos[brand.id as keyof BrandLogos]}
+                          alt={brand.label}
+                          className="w-full h-full object-contain p-2"
+                        />
+                      ) : (
+                        <ImageIcon className="w-7 h-7 text-navy/25" strokeWidth={1.25} />
+                      )}
+                    </div>
+                    <span className={`text-[0.62rem] font-extrabold uppercase tracking-[0.14em] px-3 py-1 rounded-full ${brand.color}`}>
+                      {brand.label}
+                    </span>
+                    <label className="text-xs font-bold text-navy/50 cursor-pointer hover:text-navy transition-colors flex items-center gap-1.5">
+                      <CloudUpload className="w-3.5 h-3.5" strokeWidth={1.75} />
+                      {brandLogos[brand.id as keyof BrandLogos] ? "Cambiar" : "Subir PNG"}
+                      <input
+                        type="file"
+                        accept="image/png,image/webp"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleUploadBrandLogo(brand.id, file);
+                        }}
+                      />
+                    </label>
+                  </motion.div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Panel>
 
       {/* MAIN GENERATOR */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* LEFT: Form */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col gap-5">
-          <h3 className="font-bold text-slate-700 flex items-center gap-2">
-            <i className="fa-solid fa-wand-magic-sparkles text-gold"></i> Datos del Producto
+        <motion.div
+          variants={fadeUp}
+          custom={2}
+          initial="hidden"
+          animate="visible"
+          className="bg-white rounded-3xl border border-pearl-dark/70 shadow-soft p-6 sm:p-7 flex flex-col gap-5"
+        >
+          <h3 className="font-heading text-xl text-navy flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center">
+              <WandSparkles className="w-4 h-4 text-gold-dark" strokeWidth={1.75} />
+            </span>
+            Datos del producto
           </h3>
 
           {/* Product Image Upload */}
           <div>
-            <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Foto del Producto</label>
-            <div 
+            <label className={labelClass}>Foto del producto</label>
+            <div
               onClick={() => fileInputRef.current?.click()}
-              className="w-full h-48 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center cursor-pointer hover:border-navy/30 hover:bg-slate-100 transition-all overflow-hidden relative group"
+              className="w-full h-48 rounded-2xl border-2 border-dashed border-pearl-dark bg-pearl/30 flex items-center justify-center cursor-pointer hover:border-gold/50 hover:bg-gold/[0.04] transition-all duration-300 overflow-hidden relative group"
             >
               {productImage ? (
                 <>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={productImage} alt="Producto" className="w-full h-full object-contain p-4" />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white font-bold text-sm"><i className="fa-solid fa-camera mr-2"></i>Cambiar Foto</span>
+                  <img src={productImage} alt="Producto" className="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]" />
+                  <div className="absolute inset-0 bg-navy-deep/50 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                    <span className="text-white font-bold text-sm inline-flex items-center gap-2">
+                      <Camera className="w-4 h-4" strokeWidth={1.75} /> Cambiar foto
+                    </span>
                   </div>
                 </>
               ) : (
-                <div className="text-center text-slate-400">
-                  <i className="fa-solid fa-cloud-arrow-up text-3xl mb-2 block"></i>
+                <div className="text-center text-navy/35">
+                  <CloudUpload className="w-8 h-8 mx-auto mb-2 group-hover:-translate-y-1 group-hover:text-gold-dark transition-all duration-300" strokeWidth={1.5} />
                   <p className="text-sm font-medium">Haz clic para subir la foto del producto</p>
-                  <p className="text-xs text-slate-300 mt-1">PNG o JPG recomendado</p>
+                  <p className="text-xs text-navy/25 mt-1">PNG o JPG recomendado</p>
                 </div>
               )}
             </div>
-            <input 
+            <input
               ref={fileInputRef}
-              type="file" 
+              type="file"
               accept="image/*"
               onChange={handleProductImage}
               className="hidden"
@@ -341,196 +417,241 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
 
           {/* Product Name */}
           <div>
-            <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Nombre del Producto</label>
-            <input 
-              type="text" 
-              value={productName} 
+            <label className={labelClass}>Nombre del producto</label>
+            <input
+              type="text"
+              value={productName}
               onChange={e => setProductName(e.target.value)}
               placeholder="Ej: Sal Gourmet Lindasal 500g"
-              className="w-full border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy"
+              className={inputClass}
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Descripción / Beneficios</label>
+            <label className={labelClass}>Descripción / Beneficios</label>
             <textarea
               value={productDesc}
               onChange={e => setProductDesc(e.target.value)}
               placeholder="Ej: Sal marina 100% natural, artesanal, con más de 80 minerales..."
               rows={3}
-              className="w-full border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy resize-none"
+              className={`${inputClass} resize-none`}
             />
           </div>
 
           {/* Brand */}
           <div>
-            <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Marca</label>
+            <label className={labelClass}>Marca</label>
             <div className="flex flex-col sm:flex-row gap-2">
               {BRANDS.map(brand => (
-                <button
+                <motion.button
                   key={brand.id}
                   type="button"
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setSelectedBrand(brand.id)}
-                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${
-                    selectedBrand === brand.id 
-                      ? `${brand.color} border-transparent shadow-md` 
-                      : "bg-white border-slate-200 text-slate-500 hover:border-slate-300"
+                  className={`flex-1 py-2.5 rounded-xl text-sm font-bold border-2 transition-all duration-300 ${
+                    selectedBrand === brand.id
+                      ? `${brand.color} border-transparent shadow-raised scale-[1.02]`
+                      : "bg-white border-pearl-dark/70 text-navy/50 hover:border-navy/25 hover:text-navy"
                   }`}
                 >
                   {brand.label}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
 
           {/* Price */}
           <div>
-            <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Precio ($)</label>
-            <input 
-              type="number" 
+            <label className={labelClass}>Precio ($)</label>
+            <input
+              type="number"
               step="0.01"
-              value={productPrice} 
+              value={productPrice}
               onChange={e => setProductPrice(e.target.value)}
               placeholder="Ej: 4.00"
-              className="w-full border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy"
+              className={inputClass}
             />
           </div>
 
           {/* Discount Toggle */}
-          <div className="flex items-center justify-between bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <div className="flex items-center justify-between bg-pearl/40 rounded-2xl p-4 border border-pearl-dark/60">
             <div>
-              <p className="font-bold text-sm text-slate-700">¿Tiene descuento?</p>
-              <p className="text-xs text-slate-400">Activar para mostrar oferta en la imagen</p>
+              <p className="font-bold text-sm text-navy">¿Tiene descuento?</p>
+              <p className="text-xs text-navy/40">Activar para mostrar oferta en la imagen</p>
             </div>
             <button
               type="button"
               onClick={() => setHasDiscount(!hasDiscount)}
-              className={`w-12 h-7 rounded-full transition-colors relative ${hasDiscount ? "bg-green-500" : "bg-slate-300"}`}
+              aria-pressed={hasDiscount}
+              className={`w-12 h-7 rounded-full transition-colors duration-300 relative ${hasDiscount ? "bg-emerald-500" : "bg-pearl-dark"}`}
             >
-              <span className={`absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow transition-transform ${hasDiscount ? "left-[26px]" : "left-[3px]"}`}></span>
+              <motion.span
+                layout
+                transition={{ type: "spring", stiffness: 500, damping: 32 }}
+                className={`absolute top-[3px] w-[22px] h-[22px] rounded-full bg-white shadow ${hasDiscount ? "left-[26px]" : "left-[3px]"}`}
+              />
             </button>
           </div>
 
           {/* Discount Percentage */}
-          {hasDiscount && (
-            <div className="animate-fade-in">
-              <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Porcentaje de Descuento (%)</label>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <div className="flex items-center gap-3">
-                  <input 
-                    type="number" 
-                    value={discountPercent} 
-                    onChange={e => setDiscountPercent(e.target.value)}
-                    placeholder="Ej: 20"
-                    className="w-24 border border-slate-200 rounded-xl p-3 text-sm bg-slate-50 focus:outline-none focus:border-navy text-center font-bold"
-                  />
-                  <span className="text-slate-400 text-sm">%</span>
-                </div>
-                {productPrice && discountPercent && (
-                  <div className="flex items-center gap-2 text-sm mt-2 sm:mt-0">
-                    <span className="text-slate-400 line-through">${parseFloat(productPrice).toFixed(2)}</span>
-                    <span className="font-bold text-green-600">${(parseFloat(productPrice) * (1 - parseFloat(discountPercent) / 100)).toFixed(2)}</span>
+          <AnimatePresence>
+            {hasDiscount && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden"
+              >
+                <label className={labelClass}>Porcentaje de descuento (%)</label>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      value={discountPercent}
+                      onChange={e => setDiscountPercent(e.target.value)}
+                      placeholder="Ej: 20"
+                      className={`${inputClass} !w-24 text-center font-bold`}
+                    />
+                    <span className="text-navy/40 text-sm">%</span>
                   </div>
-                )}
-              </div>
-            </div>
-          )}
+                  {productPrice && discountPercent && (
+                    <div className="flex items-center gap-2 text-sm mt-2 sm:mt-0">
+                      <span className="text-navy/35 line-through tabular-nums">${parseFloat(productPrice).toFixed(2)}</span>
+                      <span className="font-bold text-emerald-600 tabular-nums">${(parseFloat(productPrice) * (1 - parseFloat(discountPercent) / 100)).toFixed(2)}</span>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Error */}
-          {errorMsg && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2">
-              <i className="fa-solid fa-circle-exclamation"></i> {errorMsg}
-            </div>
-          )}
+          <AnimatePresence>
+            {errorMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="bg-red-500/10 border border-red-500/25 text-red-600 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2"
+              >
+                <CircleAlert className="w-4 h-4 shrink-0" strokeWidth={1.75} /> {errorMsg}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Generate Button */}
-          <button
+          <motion.button
+            whileHover={isGenerating ? {} : { y: -2 }}
+            whileTap={isGenerating ? {} : { scale: 0.98 }}
             onClick={handleGenerate}
             disabled={isGenerating}
-            className="mt-2 bg-navy text-white font-bold py-4 rounded-xl hover:bg-navy/80 transition-all flex items-center justify-center gap-3 text-base disabled:opacity-60 disabled:cursor-wait shadow-lg"
+            className="relative overflow-hidden mt-2 bg-navy text-pearl font-bold py-4 rounded-2xl hover:bg-navy-light transition-colors duration-500 flex items-center justify-center gap-3 text-base disabled:opacity-70 disabled:cursor-wait shadow-raised group"
           >
+            {isGenerating && (
+              <span aria-hidden="true" className="absolute inset-0 animate-shimmer" />
+            )}
             {isGenerating ? (
               <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <Loader2 className="w-5 h-5 animate-spin" />
                 Generando imagen publicitaria...
               </>
             ) : (
               <>
-                <i className="fa-solid fa-bolt"></i>
-                Generar Imagen Publicitaria
+                <Zap className="w-5 h-5 text-gold transition-transform duration-500 group-hover:scale-125" strokeWidth={1.75} />
+                Generar imagen publicitaria
               </>
             )}
-          </button>
+          </motion.button>
 
           {isGenerating && (
-            <p className="text-xs text-slate-400 text-center">
-              <i className="fa-solid fa-circle-info mr-1"></i> 
+            <p className="text-xs text-navy/40 text-center flex items-center justify-center gap-1.5">
+              <Info className="w-3.5 h-3.5" strokeWidth={1.75} />
               Esto puede tardar entre 15-45 segundos. La IA está componiendo tu imagen.
             </p>
           )}
-        </div>
+        </motion.div>
 
         {/* RIGHT: Preview */}
-        <div className="bg-slate-50 rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col">
-          <h3 className="font-bold text-slate-700 mb-4 flex items-center gap-2">
-            <i className="fa-solid fa-eye text-slate-400"></i> Vista Previa del Resultado
+        <motion.div
+          variants={fadeUp}
+          custom={3}
+          initial="hidden"
+          animate="visible"
+          className="bg-gradient-to-b from-pearl/50 to-white rounded-3xl border border-pearl-dark/70 shadow-soft p-6 sm:p-7 flex flex-col"
+        >
+          <h3 className="font-heading text-xl text-navy mb-4 flex items-center gap-2.5">
+            <span className="w-8 h-8 rounded-lg bg-navy text-gold flex items-center justify-center">
+              <Eye className="w-4 h-4" strokeWidth={1.75} />
+            </span>
+            Vista previa del resultado
           </h3>
 
-          <div className="flex-1 bg-white border border-slate-200 rounded-xl shadow-sm relative min-h-[400px] flex flex-col">
+          <div className="flex-1 bg-white border border-pearl-dark/60 rounded-2xl shadow-soft relative min-h-[400px] flex flex-col overflow-hidden">
             {generatedImage ? (
-              <div className="flex flex-col h-full">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col h-full"
+              >
                 {/* Instagram-like header */}
-                <div className="flex items-center gap-3 p-4 border-b border-slate-100">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-teal flex items-center justify-center text-white text-xs font-bold">LS</div>
+                <div className="flex items-center gap-3 p-4 border-b border-pearl/80">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gold to-teal flex items-center justify-center text-white text-xs font-bold shadow-[0_0_14px_rgba(201,168,76,0.35)]">LS</div>
                   <div>
-                    <p className="font-bold text-sm text-slate-800">lindasalec</p>
-                    <p className="text-[0.65rem] text-slate-400">Patrocinado</p>
+                    <p className="font-bold text-sm text-navy">lindasalec</p>
+                    <p className="text-[0.65rem] text-navy/40">Patrocinado</p>
                   </div>
                 </div>
 
                 {/* Generated Image */}
-                <div className="flex-1 bg-slate-100 flex items-center justify-center overflow-hidden relative group">
+                <div className="flex-1 bg-pearl/50 flex items-center justify-center overflow-hidden relative group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={generatedImage} 
-                    alt="Imagen publicitaria generada" 
+                  <img
+                    src={generatedImage}
+                    alt="Imagen publicitaria generada"
                     className="w-full h-full object-contain"
                   />
                   {/* Botones Flotantes (Hover) */}
-                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
+                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.92 }}
                       onClick={() => window.open(generatedImage, '_blank')}
-                      className="bg-black/70 hover:bg-black text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg"
+                      className="bg-navy-deep/70 hover:bg-navy-deep text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors shadow-lg"
                       title="Ver en pantalla completa"
                     >
-                      <i className="fa-solid fa-expand"></i>
-                    </button>
-                    <button 
+                      <Expand className="w-4 h-4" strokeWidth={1.75} />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.92 }}
                       onClick={() => {
                         if(confirm('¿Estás seguro de descartar esta imagen?')) {
                           setGeneratedImage(null);
                           setGeneratedCaption("");
                         }
                       }}
-                      className="bg-red-500/80 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-all shadow-lg"
+                      className="bg-red-500/80 hover:bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm transition-colors shadow-lg"
                       title="Descartar imagen"
                     >
-                      <i className="fa-solid fa-trash-can"></i>
-                    </button>
+                      <Trash2 className="w-4 h-4" strokeWidth={1.75} />
+                    </motion.button>
                   </div>
                 </div>
 
                 {/* Caption Preview */}
                 {generatedCaption && (
-                  <div className="p-4 border-t border-slate-100 max-h-[150px] overflow-y-auto">
-                    <p className="whitespace-pre-wrap text-xs text-slate-600 leading-relaxed">{generatedCaption}</p>
+                  <div className="p-4 border-t border-pearl/80 max-h-[150px] overflow-y-auto">
+                    <p className="whitespace-pre-wrap text-xs text-navy/60 leading-relaxed">{generatedCaption}</p>
                   </div>
                 )}
 
                 {/* Actions */}
-                <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
-                  <button 
+                <div className="p-4 border-t border-pearl/80 flex flex-col sm:flex-row gap-3">
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
                     onClick={async () => {
                       if (!generatedImage) return;
                       try {
@@ -549,90 +670,121 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                         window.open(generatedImage, '_blank');
                       }
                     }}
-                    className="flex-1 bg-navy text-white py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-navy/80 transition-colors"
+                    className="flex-1 bg-navy text-pearl py-2.5 rounded-full font-bold text-sm flex items-center justify-center gap-2 hover:bg-gold hover:text-navy transition-colors duration-500"
                   >
-                    <i className="fa-solid fa-download"></i> Descargar Imagen
-                  </button>
-                  <button
+                    <Download className="w-4 h-4" strokeWidth={1.75} /> Descargar imagen
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => {
                       if (generatedCaption) {
                         navigator.clipboard.writeText(generatedCaption);
                         alert("✅ Caption copiado al portapapeles");
                       }
                     }}
-                    className="px-4 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"
+                    className="px-5 py-2.5 bg-pearl text-navy/70 rounded-full font-bold text-sm hover:bg-pearl-dark hover:text-navy transition-colors duration-300 flex items-center justify-center gap-2"
                   >
-                    <i className="fa-solid fa-copy"></i> Copiar Texto
-                  </button>
+                    <Copy className="w-4 h-4" strokeWidth={1.75} /> Copiar texto
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div className="absolute inset-0 flex flex-col justify-center items-center text-slate-400 p-8 text-center">
-                <i className="fa-solid fa-image text-5xl mb-4 text-slate-200"></i>
-                <p className="text-sm font-medium text-slate-500 mb-1">Tu imagen publicitaria aparecerá aquí</p>
-                <p className="text-xs text-slate-400 max-w-[280px]">Completa el formulario a la izquierda, sube la foto del producto y presiona &quot;Generar&quot; para crear una imagen lista para publicar.</p>
+              <div className="absolute inset-0 flex flex-col justify-center items-center text-navy/35 p-8 text-center">
+                {isGenerating ? (
+                  <>
+                    <div className="relative w-24 h-24 mb-6">
+                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-gold/20 to-teal/20 animate-pulse" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <WandSparkles className="w-8 h-8 text-gold-dark animate-float" strokeWidth={1.5} />
+                      </div>
+                    </div>
+                    <p className="text-sm font-semibold text-navy/60 mb-1">Componiendo tu anuncio…</p>
+                    <p className="text-xs text-navy/40 max-w-[280px]">La IA está integrando tu producto, precio y marca en una composición premium.</p>
+                  </>
+                ) : (
+                  <>
+                    <ImageIcon className="w-14 h-14 mb-4 text-navy/15 animate-float" strokeWidth={1} />
+                    <p className="text-sm font-semibold text-navy/50 mb-1">Tu imagen publicitaria aparecerá aquí</p>
+                    <p className="text-xs text-navy/35 max-w-[280px]">Completa el formulario a la izquierda, sube la foto del producto y presiona &quot;Generar&quot; para crear una imagen lista para publicar.</p>
+                  </>
+                )}
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* HISTORY SECTION */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mt-6">
-        <div className="p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
-          <div>
-            <h2 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-              <i className="fa-solid fa-clock-rotate-left text-navy"></i> Historial
-            </h2>
-            <p className="text-xs text-slate-500 mt-1">{postHistory.length} imágenes generadas</p>
-          </div>
-        </div>
+      <Panel
+        index={4}
+        title="Historial"
+        subtitle={`${postHistory.length} imágenes generadas`}
+        icon={<History className="w-4 h-4" strokeWidth={1.75} />}
+      >
         <div className="p-6">
           {isLoadingHistory ? (
             <div className="flex justify-center items-center py-12">
-              <div className="w-8 h-8 border-4 border-slate-200 border-t-teal rounded-full animate-spin"></div>
+              <div className="relative w-10 h-10">
+                <div className="absolute inset-0 rounded-full border-2 border-teal/15" />
+                <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-teal animate-spin" />
+              </div>
             </div>
           ) : postHistory.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <motion.div
+              variants={staggerContainer}
+              initial="hidden"
+              animate="visible"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
               {postHistory.map(post => {
                 // Formatting time relative or simple date
                 const timeAgo = post.created_at ? new Date(post.created_at).toLocaleDateString() : "Reciente";
-                
+
                 return (
-                <div key={post.id} className="flex flex-col bg-white rounded-xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300 transition-all group">
+                <motion.div
+                  key={post.id}
+                  variants={rowVariant}
+                  whileHover={{ y: -5 }}
+                  className="flex flex-col bg-white rounded-2xl overflow-hidden border border-pearl-dark/70 shadow-soft hover:shadow-raised hover:border-gold/30 transition-[box-shadow,border-color] duration-500 group"
+                >
                   {/* Image Section */}
-                  <div className="relative aspect-[3/4] w-full bg-slate-50 overflow-hidden">
+                  <div className="relative aspect-[3/4] w-full bg-pearl/40 overflow-hidden">
                     {post.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={post.image_url} alt="Generado" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      <img src={post.image_url} alt="Generado" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-300">
-                        <i className="fa-solid fa-image text-4xl"></i>
+                      <div className="w-full h-full flex items-center justify-center text-navy/20">
+                        <ImageIcon className="w-10 h-10" strokeWidth={1} />
                       </div>
                     )}
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 bg-gradient-to-t from-navy/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    />
                   </div>
-                  
+
                   {/* Content Section */}
                   <div className="p-4 flex flex-col flex-1 gap-3">
-                    <p className="text-slate-600 text-xs line-clamp-3 leading-relaxed">
+                    <p className="text-navy/55 text-xs line-clamp-3 leading-relaxed">
                       &quot;{post.caption || "Sin texto generado"}&quot;
                     </p>
-                    
+
                     {/* Primary Actions */}
                     <div className="flex flex-col gap-2 mt-auto pt-2">
-                      <button 
+                      <motion.button
+                        whileTap={{ scale: 0.97 }}
                         onClick={() => {
                           setGeneratedImage(post.image_url);
                           setGeneratedCaption(post.caption || "");
                           window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="w-full py-2 bg-navy border border-navy hover:bg-navy/90 text-white rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2 bg-navy hover:bg-gold hover:text-navy text-pearl rounded-lg text-xs font-semibold transition-colors duration-500 flex items-center justify-center gap-2"
                       >
-                        <i className="fa-solid fa-arrow-up"></i> Cargar al Editor
-                      </button>
-                      
+                        <ArrowUp className="w-3.5 h-3.5" strokeWidth={1.75} /> Cargar al editor
+                      </motion.button>
+
                       <div className="grid grid-cols-2 gap-2">
-                        <button 
+                        <button
                           onClick={async () => {
                             if (!post.image_url) return;
                             try {
@@ -653,55 +805,55 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                               window.open(post.image_url, '_blank');
                             }
                           }}
-                          className="py-2 bg-teal/5 border border-teal/20 hover:bg-teal/10 text-teal-700 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                          className="py-2 bg-teal/5 border border-teal/20 hover:bg-teal/15 hover:-translate-y-0.5 text-teal-dark rounded-lg text-[11px] font-semibold transition-all duration-300 flex items-center justify-center gap-1.5"
                         >
-                          <i className="fa-solid fa-download"></i> Bajar
+                          <Download className="w-3 h-3" strokeWidth={1.75} /> Bajar
                         </button>
-                        <button 
+                        <button
                           onClick={() => {
                             if (post.caption) {
                               navigator.clipboard.writeText(post.caption);
                               alert("✅ Texto copiado al portapapeles");
                             }
                           }}
-                          className="py-2 bg-gold/5 border border-gold/20 hover:bg-gold/10 text-[#c9a84c] rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                          className="py-2 bg-gold/5 border border-gold/20 hover:bg-gold/15 hover:-translate-y-0.5 text-gold-dark rounded-lg text-[11px] font-semibold transition-all duration-300 flex items-center justify-center gap-1.5"
                         >
-                          <i className="fa-solid fa-copy"></i> Copiar
+                          <Copy className="w-3 h-3" strokeWidth={1.75} /> Copiar
                         </button>
-                        <button 
+                        <button
                           onClick={() => window.open(post.image_url, '_blank')}
-                          className="py-2 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                          className="py-2 bg-pearl/50 border border-pearl-dark/60 hover:bg-pearl hover:-translate-y-0.5 text-navy/60 rounded-lg text-[11px] font-semibold transition-all duration-300 flex items-center justify-center gap-1.5"
                         >
-                          <i className="fa-solid fa-eye"></i> Ver
+                          <Eye className="w-3 h-3" strokeWidth={1.75} /> Ver
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleDeleteHistoryPost(post.id)}
-                          className="py-2 bg-red-50 border border-red-200 hover:bg-red-100 text-red-600 rounded-lg text-[11px] font-semibold transition-colors flex items-center justify-center gap-2"
+                          className="py-2 bg-red-500/5 border border-red-500/20 hover:bg-red-500/15 hover:-translate-y-0.5 text-red-500 rounded-lg text-[11px] font-semibold transition-all duration-300 flex items-center justify-center gap-1.5"
                         >
-                          <i className="fa-solid fa-trash-can"></i> Borrar
+                          <Trash2 className="w-3 h-3" strokeWidth={1.75} /> Borrar
                         </button>
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Footer */}
-                  <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
+                  <div className="px-4 py-3 bg-pearl/40 border-t border-pearl-dark/50 flex items-center justify-between text-[10px] text-navy/45">
                     <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
-                        <i className="fa-solid fa-user text-[8px]"></i>
+                      <div className="w-5 h-5 rounded-full bg-navy flex items-center justify-center text-gold">
+                        <User className="w-2.5 h-2.5" strokeWidth={2} />
                       </div>
-                      <span className="font-medium text-slate-600">Lindasal Admin</span>
+                      <span className="font-semibold text-navy/60">Lindasal Admin</span>
                     </div>
                     <span>{timeAgo}</span>
                   </div>
-                </div>
+                </motion.div>
               )})}
-            </div>
+            </motion.div>
           ) : (
-            <p className="text-center text-slate-500 py-12">Aún no hay imágenes generadas en el historial.</p>
+            <p className="text-center text-navy/45 py-12">Aún no hay imágenes generadas en el historial.</p>
           )}
         </div>
-      </div>
+      </Panel>
     </div>
   );
 }

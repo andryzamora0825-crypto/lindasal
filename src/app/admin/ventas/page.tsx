@@ -1,7 +1,28 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Landmark,
+  Receipt,
+  TrendingUp,
+  PackageOpen,
+  Check,
+  Clock,
+  FileText,
+  Trash2,
+  ShoppingCart,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import {
+  PageHeader,
+  KpiCard,
+  Panel,
+  BrandLoader,
+  EmptyPanelState,
+  staggerContainer,
+  rowVariant,
+} from "@/components/admin/AdminUI";
 
 interface VentaItem {
   id: string;
@@ -50,7 +71,7 @@ export default function AdminVentasPage() {
           .from("ventas")
           .select("*")
           .order("created_at", { ascending: false });
-        
+
         if (error) throw error;
         if (data) {
           setVentas(data);
@@ -72,9 +93,9 @@ export default function AdminVentasPage() {
         .from("ventas")
         .update({ status: newStatus })
         .eq("id", id);
-      
+
       if (error) throw error;
-      
+
       setVentas(prev => prev.map(v => v.id === id ? { ...v, status: newStatus } : v));
     } catch (err) {
       console.error("Error al actualizar estado:", err);
@@ -97,7 +118,7 @@ export default function AdminVentasPage() {
 
   // Imprimir recibo PDF
   const handlePrintReceipt = (venta: Venta) => {
-    const date = new Date(venta.created_at).toLocaleString('es-ES', { 
+    const date = new Date(venta.created_at).toLocaleString('es-ES', {
       day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
     });
 
@@ -140,15 +161,15 @@ export default function AdminVentasPage() {
             <p>Sal Marina 100% Orgánica</p>
             <p>Ecuador</p>
           </div>
-          
+
           <div class="divider"></div>
-          
+
           <p><strong>Fecha:</strong> ${date}</p>
           <p><strong>Cliente:</strong> ${venta.customer_name || 'Consumidor Final'}</p>
           <p><strong>Pedido #:</strong> ${venta.id.split('-')[0].toUpperCase()}</p>
-          
+
           <div class="divider"></div>
-          
+
           <table>
             <thead>
               <tr>
@@ -160,18 +181,18 @@ export default function AdminVentasPage() {
               ${itemsHtml}
             </tbody>
           </table>
-          
+
           <div class="total">
             TOTAL: $${Number(venta.total_amount).toFixed(2)}
           </div>
-          
+
           <div class="divider"></div>
-          
+
           <div class="footer">
             <p>¡Gracias por elegir lo natural!</p>
             <p style="font-size: 0.65rem; margin-top: 10px;">Este es un comprobante de pedido interno, no tiene validez tributaria para el SRI.</p>
           </div>
-          
+
           <script>
             window.onload = function() { window.print(); window.setTimeout(function() { window.close(); }, 500); }
           </script>
@@ -185,7 +206,7 @@ export default function AdminVentasPage() {
   const totalVentas = ventas.length;
   const ingresosTotales = ventas.reduce((sum, v) => sum + (Number(v.total_amount) || 0), 0);
   const ticketPromedio = totalVentas > 0 ? ingresosTotales / totalVentas : 0;
-  
+
   // Agrupar items vendidos
   const productosVendidos = ventas.reduce((sum, v) => {
     const itemsCount = v.items?.reduce((itemSum, item) => itemSum + (item.quantity || 1), 0) || 0;
@@ -193,154 +214,157 @@ export default function AdminVentasPage() {
   }, 0);
 
   return (
-    <div className="flex flex-col gap-6">
-      <header>
-        <h1 className="text-3xl font-bold text-slate-800">Historial de Ventas</h1>
-        <p className="text-slate-500 mt-1">Revisa el registro de pedidos generados en la tienda web.</p>
-      </header>
+    <div className="flex flex-col gap-7">
+      <PageHeader
+        eyebrow="Operación"
+        title="Historial de"
+        accent="ventas."
+        subtitle="Revisa el registro de pedidos generados en la tienda web."
+      />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Ingresos Totales */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-xl">
-            <i className="fa-solid fa-sack-dollar"></i>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Ingresos Totales</p>
-            <p className="text-2xl font-black text-slate-800">${ingresosTotales.toFixed(2)}</p>
-          </div>
-        </div>
-
-        {/* Total Pedidos */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-navy/10 text-navy flex items-center justify-center text-xl">
-            <i className="fa-solid fa-receipt"></i>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Pedidos</p>
-            <p className="text-2xl font-black text-slate-800">{totalVentas}</p>
-          </div>
-        </div>
-
-        {/* Ticket Promedio */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-            <i className="fa-solid fa-chart-line"></i>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Ticket Promedio</p>
-            <p className="text-2xl font-black text-slate-800">${ticketPromedio.toFixed(2)}</p>
-          </div>
-        </div>
-
-        {/* Productos Vendidos */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
-            <i className="fa-solid fa-box-open"></i>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">Productos Vendidos</p>
-            <p className="text-2xl font-black text-slate-800">{productosVendidos}</p>
-          </div>
-        </div>
+        <KpiCard
+          index={1}
+          icon={<Landmark className="w-5 h-5" strokeWidth={1.75} />}
+          label="Ingresos Totales"
+          value={ingresosTotales}
+          format={(n) => `$${n.toFixed(2)}`}
+          tone="green"
+        />
+        <KpiCard
+          index={2}
+          icon={<Receipt className="w-5 h-5" strokeWidth={1.75} />}
+          label="Total Pedidos"
+          value={totalVentas}
+          tone="navy"
+        />
+        <KpiCard
+          index={3}
+          icon={<TrendingUp className="w-5 h-5" strokeWidth={1.75} />}
+          label="Ticket Promedio"
+          value={ticketPromedio}
+          format={(n) => `$${n.toFixed(2)}`}
+          tone="purple"
+        />
+        <KpiCard
+          index={4}
+          icon={<PackageOpen className="w-5 h-5" strokeWidth={1.75} />}
+          label="Productos Vendidos"
+          value={productosVendidos}
+          tone="gold"
+        />
       </div>
 
       {/* Tabla de Ventas */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-          <h2 className="font-bold text-lg text-slate-800">Últimos Pedidos</h2>
-        </div>
-
+      <Panel
+        index={5}
+        title="Últimos pedidos"
+        subtitle="Los pedidos web se registran antes de redirigir a WhatsApp"
+        icon={<ShoppingCart className="w-4 h-4" strokeWidth={1.75} />}
+      >
         {loading ? (
-          <div className="flex items-center justify-center p-16">
-            <div className="w-8 h-8 border-4 border-navy/20 border-t-navy rounded-full animate-spin"></div>
-          </div>
+          <BrandLoader label="Cargando ventas…" />
         ) : ventas.length === 0 ? (
-          <div className="p-16 flex flex-col items-center justify-center text-center">
-            <i className="fa-solid fa-cash-register text-5xl text-slate-300 mb-6"></i>
-            <h3 className="text-xl font-bold text-slate-700 mb-2">No hay ventas registradas</h3>
-            <p className="text-slate-500 max-w-[400px]">Los próximos pedidos que se hagan en tu tienda aparecerán aquí automáticamente antes de redirigirse a WhatsApp.</p>
-          </div>
+          <EmptyPanelState
+            icon={<Receipt className="w-8 h-8" strokeWidth={1.25} />}
+            title="No hay ventas registradas"
+            description="Los próximos pedidos que se hagan en tu tienda aparecerán aquí automáticamente antes de redirigirse a WhatsApp."
+          />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50">
-                  <th className="text-left px-5 py-3 font-semibold text-slate-500 text-xs uppercase tracking-wider">Fecha / Cliente</th>
-                  <th className="text-left px-5 py-3 font-semibold text-slate-500 text-xs uppercase tracking-wider">Productos</th>
-                  <th className="text-right px-5 py-3 font-semibold text-slate-500 text-xs uppercase tracking-wider">Total</th>
-                  <th className="text-center px-5 py-3 font-semibold text-slate-500 text-xs uppercase tracking-wider">Estado</th>
-                  <th className="text-center px-5 py-3 font-semibold text-slate-500 text-xs uppercase tracking-wider">Acciones</th>
+                <tr className="border-b border-pearl-dark/50 bg-pearl/40">
+                  <th className="text-left px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Fecha / Cliente</th>
+                  <th className="text-left px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Productos</th>
+                  <th className="text-right px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Total</th>
+                  <th className="text-center px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Estado</th>
+                  <th className="text-center px-5 py-3.5 font-bold text-navy/45 text-[0.62rem] uppercase tracking-[0.18em]">Acciones</th>
                 </tr>
               </thead>
-              <tbody>
-                {ventas.map((venta, idx) => {
-                  const date = new Date(venta.created_at).toLocaleString('es-ES', { 
+              <motion.tbody variants={staggerContainer} initial="hidden" animate="visible">
+                {ventas.map((venta) => {
+                  const date = new Date(venta.created_at).toLocaleString('es-ES', {
                     day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
                   });
-                  
+
                   const isCompleted = venta.status === "completado";
-                  
+
                   return (
-                    <tr key={venta.id} className={`border-b border-slate-50 hover:bg-slate-50/50 transition-colors ${idx % 2 === 0 ? "" : "bg-slate-50/30"}`}>
+                    <motion.tr
+                      key={venta.id}
+                      variants={rowVariant}
+                      className="border-b border-pearl/70 hover:bg-pearl/30 transition-colors duration-300"
+                    >
                       <td className="px-5 py-4">
-                        <div className="font-bold text-slate-800">{venta.customer_name || "Cliente Web"}</div>
-                        <div className="text-[0.7rem] text-slate-400 mt-0.5">{date}</div>
+                        <div className="font-bold text-navy">{venta.customer_name || "Cliente Web"}</div>
+                        <div className="text-[0.7rem] text-navy/40 mt-0.5">{date}</div>
                       </td>
                       <td className="px-5 py-4">
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1.5">
                           {venta.items?.map((item, i) => (
-                            <div key={i} className="text-xs text-slate-600 flex items-center gap-2">
-                              <span className="font-bold text-navy bg-slate-100 px-1.5 rounded">{item.quantity}x</span>
-                              <span className="truncate max-w-[200px]">{item.name}</span>
+                            <div key={i} className="text-xs text-navy/60 flex items-center gap-2">
+                              <span className="font-bold text-navy bg-gold/15 border border-gold/20 px-1.5 py-0.5 rounded tabular-nums">
+                                {item.quantity}x
+                              </span>
+                              <span className="truncate max-w-[220px]">{item.name}</span>
                             </div>
                           ))}
                         </div>
                       </td>
                       <td className="px-5 py-4 text-right">
-                        <span className="font-bold text-navy text-base">${Number(venta.total_amount).toFixed(2)}</span>
+                        <span className="font-heading text-lg text-navy tabular-nums">
+                          ${Number(venta.total_amount).toFixed(2)}
+                        </span>
                       </td>
                       <td className="px-5 py-4 text-center">
-                        <button 
+                        <motion.button
+                          whileTap={{ scale: 0.94 }}
                           onClick={() => handleUpdateStatus(venta.id, venta.status)}
-                          className={`text-[0.65rem] font-bold uppercase px-3 py-1 rounded-full border transition-colors ${
-                            isCompleted 
-                              ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100" 
-                              : "bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                          className={`text-[0.62rem] font-bold uppercase tracking-[0.1em] px-3.5 py-1.5 rounded-full border transition-all duration-300 inline-flex items-center gap-1.5 hover:-translate-y-0.5 ${
+                            isCompleted
+                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/25 hover:bg-emerald-500/20"
+                              : "bg-gold/10 text-gold-dark border-gold/30 hover:bg-gold/20"
                           }`}
                         >
                           {isCompleted ? (
-                            <><i className="fa-solid fa-check mr-1"></i> Completado</>
+                            <><Check className="w-3 h-3" /> Completado</>
                           ) : (
-                            <><i className="fa-solid fa-clock mr-1"></i> Pendiente</>
+                            <><Clock className="w-3 h-3" /> Pendiente</>
                           )}
-                        </button>
+                        </motion.button>
                       </td>
-                      <td className="px-5 py-4 flex justify-center items-center gap-2">
-                        <button
-                          onClick={() => handlePrintReceipt(venta)}
-                          className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 hover:bg-navy hover:text-white transition-colors flex items-center justify-center"
-                          title="Generar Recibo PDF"
-                        >
-                          <i className="fa-solid fa-file-invoice"></i>
-                        </button>
-                        <button
-                          onClick={() => handleDelete(venta.id)}
-                          className="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-colors flex items-center justify-center"
-                          title="Eliminar registro"
-                        >
-                          <i className="fa-solid fa-trash text-xs"></i>
-                        </button>
+                      <td className="px-5 py-4">
+                        <div className="flex justify-center items-center gap-2">
+                          <motion.button
+                            whileHover={{ scale: 1.12, rotate: -4 }}
+                            whileTap={{ scale: 0.92 }}
+                            onClick={() => handlePrintReceipt(venta)}
+                            className="w-9 h-9 rounded-full bg-pearl text-navy/60 hover:bg-navy hover:text-gold transition-colors duration-300 flex items-center justify-center"
+                            title="Generar Recibo PDF"
+                          >
+                            <FileText className="w-4 h-4" strokeWidth={1.75} />
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.12, rotate: 4 }}
+                            whileTap={{ scale: 0.92 }}
+                            onClick={() => handleDelete(venta.id)}
+                            className="w-9 h-9 rounded-full bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-colors duration-300 flex items-center justify-center"
+                            title="Eliminar registro"
+                          >
+                            <Trash2 className="w-4 h-4" strokeWidth={1.75} />
+                          </motion.button>
+                        </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   );
                 })}
-              </tbody>
+              </motion.tbody>
             </table>
           </div>
         )}
-      </div>
+      </Panel>
     </div>
   );
 }

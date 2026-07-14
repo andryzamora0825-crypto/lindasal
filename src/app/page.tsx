@@ -8,10 +8,12 @@ import Usage from "@/components/landing/Usage";
 import Warnings from "@/components/landing/Warnings";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
+import ScrollProgress from "@/components/landing/ScrollProgress";
 
 export default function Home() {
   return (
-    <main className="flex flex-col bg-pearl min-h-screen overflow-x-hidden">
+    <main className="flex flex-col bg-[#f8f5f0] min-h-screen overflow-x-hidden selection:bg-gold/30 selection:text-navy">
+      <ScrollProgress />
       <Navbar />
       <Hero />
       <DeliveryBanner />

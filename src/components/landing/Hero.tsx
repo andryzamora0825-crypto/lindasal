@@ -1,99 +1,220 @@
-import React from "react";
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef } from "react";
+import { motion, useScroll, useTransform, useInView, animate } from "framer-motion";
 import bgImage from "../../../imagen de fondo/WhatsApp Image 2026-04-08 at 1.33.12 PM.jpeg";
 
+const reveal = {
+  hidden: { opacity: 0, y: 36 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 1, ease: [0.16, 1, 0.3, 1] as const, delay: i * 0.08 },
+  }),
+};
+
 export default function Hero() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.18]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+
   return (
     <header
+      ref={ref}
       id="inicio"
-      className="relative min-h-[100vh] flex flex-col justify-center items-start overflow-hidden pt-32 pb-20 px-[5%] md:pt-32 lg:pt-[10%] bg-navy md:items-start text-center md:text-left"
-      aria-label="Sección principal"
+      className="relative min-h-[100svh] w-full overflow-hidden bg-navy-deep text-pearl flex items-end md:items-center"
+      aria-label="Sección principal Lindasal"
     >
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105 transition-transform duration-[8000ms] ease-out z-0 hidden md:block hover:scale-100"
-        style={{ backgroundImage: `url('${bgImage.src}')` }}
-        role="img" 
-        aria-label="Fondo Sal marina orgánica"
-      ></div>
-      <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/80 to-transparent z-10 hidden md:block"></div>
-      
-      {/* Decorative Particles (visible on larger screens) */}
-      <div className="absolute w-2 h-2 rounded-full bg-gold/60 top-[22%] left-[55%] z-20 animate-float hidden lg:block"></div>
-      <div className="absolute w-[5px] h-[5px] rounded-full bg-teal/70 top-[40%] left-[70%] z-20 animate-float hidden lg:block" style={{ animationDelay: '1s' }}></div>
-      
-      <div className="relative z-30 max-w-[680px] w-full mx-auto md:mx-0 animate-fade-in-up md:mt-0 flex flex-col items-center md:items-start">
-        
-        {/* Mobile Product Image to match 'lindasal' original mobile design */}
-        <div className="w-full md:hidden mb-8 rounded-2xl overflow-hidden shadow-2xl relative animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          <img 
-            src={bgImage.src} 
-            alt="Productos Lindasal" 
-            className="w-full h-auto object-cover object-center"
-          />
+      <motion.div
+        style={{ y: bgY, scale: bgScale, backgroundImage: `url('${bgImage.src}')` }}
+        className="absolute inset-0 bg-cover bg-center will-change-transform"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-navy-deep via-navy-deep/80 to-navy/30" aria-hidden="true" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-deep via-transparent to-transparent" aria-hidden="true" />
+      <div className="absolute inset-0 texture-grain" aria-hidden="true" />
+
+      <div className="absolute -top-10 -right-20 w-[520px] h-[520px] rounded-full bg-gold/[0.06] blur-[140px] pointer-events-none animate-float-slow" />
+      <div className="absolute bottom-0 left-1/3 w-[420px] h-[420px] rounded-full bg-teal/[0.05] blur-[120px] pointer-events-none animate-float-slow" />
+
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity }}
+        className="relative z-20 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-16 pt-32 pb-20 md:pt-28 md:pb-24"
+      >
+        <div className="grid grid-cols-12 gap-y-10 md:gap-x-10 items-center">
+          <div className="col-span-12 lg:col-span-8 flex flex-col">
+            <motion.div
+              variants={reveal}
+              custom={0}
+              initial="hidden"
+              animate="visible"
+              className="mb-8 flex items-center gap-4"
+            >
+              <span className="block w-10 h-px bg-gold/60" />
+              <span className="text-eyebrow text-gold/80">Sal Marina · Ecuador · Desde 1939</span>
+            </motion.div>
+
+            <h1 className="font-display text-pearl">
+              <motion.span
+                variants={reveal}
+                custom={1}
+                initial="hidden"
+                animate="visible"
+                className="block text-display-xl tracking-[-0.03em] font-light"
+              >
+                El Poder
+              </motion.span>
+              <motion.span
+                variants={reveal}
+                custom={2}
+                initial="hidden"
+                animate="visible"
+                className="block text-display-xl tracking-[-0.03em] -mt-2 md:-mt-4"
+              >
+                <span className="text-pearl/70">del</span>{" "}
+                <span className="font-medium gradient-text-warm">Mar</span>
+              </motion.span>
+              <motion.span
+                variants={reveal}
+                custom={3}
+                initial="hidden"
+                animate="visible"
+                className="block text-display-lg italic font-light text-teal-light/90 mt-2 md:mt-4 ml-0 md:ml-[18%]"
+              >
+                en tus manos.
+              </motion.span>
+            </h1>
+
+            <motion.p
+              variants={reveal}
+              custom={4}
+              initial="hidden"
+              animate="visible"
+              className="mt-10 max-w-[44ch] font-body text-pearl/70 text-[1.02rem] md:text-[1.12rem] leading-[1.8]"
+            >
+              Sal marina virgen, agua de mar Quinton y minerales puros del Pacífico ecuatoriano.
+              Una herencia familiar de tres generaciones — ahora en tus manos.
+            </motion.p>
+
+            <motion.div
+              variants={reveal}
+              custom={5}
+              initial="hidden"
+              animate="visible"
+              className="mt-10 flex flex-col sm:flex-row gap-4 sm:items-center"
+            >
+              <Link href="/tienda" className="btn-gold halo-hover group">
+                <span>Explorar la colección</span>
+                <i className="fa-solid fa-arrow-right text-xs transition-transform duration-500 group-hover:translate-x-1" aria-hidden="true" />
+              </Link>
+              <a href="#productos" className="inline-flex items-center gap-3 text-pearl/80 hover:text-pearl font-body text-sm tracking-[0.18em] uppercase font-semibold link-underline">
+                Ver productos
+              </a>
+            </motion.div>
+
+            <motion.div
+              variants={reveal}
+              custom={6}
+              initial="hidden"
+              animate="visible"
+              className="mt-14 grid grid-cols-3 max-w-md gap-6 border-t border-pearl/10 pt-8"
+            >
+              <Stat number="03" label="Líneas orgánicas" />
+              <Stat number="86" label="Años de herencia" />
+              <Stat number="60%" label="Minerales naturales" />
+            </motion.div>
+          </div>
+
+          <div className="hidden lg:block lg:col-span-4">
+            <FloatingCallout />
+          </div>
         </div>
+      </motion.div>
 
-        <div className="mb-6 animate-fade-in-up w-full flex justify-center md:justify-start" style={{ animationDelay: '0.2s' }}>
-          <span className="inline-flex flex-col md:flex-row items-center justify-center gap-1 md:gap-1.5 px-6 py-3 md:px-4 md:py-1.5 rounded-[2rem] md:rounded-full text-[0.65rem] md:text-[0.72rem] font-semibold tracking-widest uppercase bg-gold/10 md:bg-gold/15 text-gold border border-gold/40 text-center leading-relaxed">
-            <i className="fa-solid fa-seedling mb-1 md:mb-0" aria-hidden="true"></i>
-            <span>100% Orgánico · Ecuador · Lindasal <span className="md:hidden">·<br/>Nalleva · Aguademar Quinton</span></span>
-          </span>
-        </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.6, duration: 1 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 hidden md:flex flex-col items-center gap-3 text-pearl/50"
+      >
+        <span className="text-eyebrow">Descubrir</span>
+        <span className="block w-px h-10 bg-gradient-to-b from-pearl/40 to-transparent" />
+      </motion.div>
+    </header>
+  );
+}
 
-        <h1 className="font-heading text-[clamp(1.8rem,5vw,2.2rem)] md:text-[clamp(2rem,3.5vw,3rem)] font-bold text-pearl leading-[1.15] mb-6 drop-shadow-2xl animate-fade-in-up" style={{ animationDelay: '0.35s' }}>
-          El Poder del Mar<br />
-          <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent text-[1.1em]">
-            <em className="font-light italic tracking-wide">en tus Manos</em>
-          </span>
-        </h1>
+function Stat({ number, label }: { number: string; label: string }) {
+  const match = number.match(/^(\d+)(\D*)$/);
+  const target = match ? parseInt(match[1], 10) : 0;
+  const suffix = match ? match[2] : "";
+  const pad = match ? match[1].length : 0;
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-40px" });
 
-        <p className="font-body text-[clamp(1rem,1.8vw,1.2rem)] text-pearl/85 leading-[1.8] mb-8 max-w-full md:max-w-[620px] drop-shadow-lg animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-          Desde hace millones de años, el mar guarda el secreto de la vida. En LINDASAL, llevamos ese poder ancestral directamente a ti. Somos pioneros en Ecuador en productos 100% naturales de origen marino: LINDASAL, AGUADEMAR QUINTON, NAVELLA.
+  useEffect(() => {
+    if (!inView || !ref.current) return;
+    const controls = animate(0, target, {
+      duration: 1.8,
+      delay: 0.5,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => {
+        if (ref.current) {
+          ref.current.textContent = String(Math.round(v)).padStart(pad, "0") + suffix;
+        }
+      },
+    });
+    return () => controls.stop();
+  }, [inView, target, pad, suffix]);
+
+  return (
+    <div className="flex flex-col">
+      <span ref={ref} className="font-heading text-pearl text-3xl md:text-4xl font-light leading-none tabular-nums">
+        {String(0).padStart(pad, "0") + suffix}
+      </span>
+      <span className="mt-2 text-[0.65rem] tracking-[0.2em] uppercase text-pearl/50 font-body font-semibold leading-tight">{label}</span>
+    </div>
+  );
+}
+
+function FloatingCallout() {
+  return (
+    <motion.aside
+      initial={{ opacity: 0, x: 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.9, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      className="relative ml-auto w-[320px]"
+      aria-label="Producto destacado"
+    >
+      <div className="absolute -inset-6 rounded-[2rem] bg-gradient-to-br from-gold/15 via-transparent to-teal/10 blur-2xl" aria-hidden="true" />
+      <div className="relative surface-glass-dark rounded-[1.75rem] p-8 overflow-hidden">
+        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-gold/10 blur-3xl" />
+        <span className="text-eyebrow text-gold-light">Producto</span>
+        <h3 className="mt-4 font-heading text-3xl text-pearl leading-[1.1]">
+          Lindasal <em className="font-light">Gourmet</em>
+        </h3>
+        <p className="mt-3 text-pearl/65 text-sm leading-[1.7]">
+          40% menos sodio. 60% minerales puros: potasio, magnesio, calcio, hierro.
         </p>
-
-        <div className="flex flex-wrap gap-2 mb-8 justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.65s' }} role="list">
-          <a
-            href="https://wa.me/message/MYAWP2XPANQSH1"
-            className="inline-flex items-center gap-1.5 py-2 px-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-pearl text-sm font-semibold tracking-wide transition-all hover:-translate-y-1 hover:bg-[#25D366] hover:border-[#25D366] hover:text-white hover:shadow-[0_8px_20px_rgba(37,211,102,0.4)]"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="listitem"
-          >
-            <i className="fa-brands fa-whatsapp"></i> WhatsApp
-          </a>
-          <a
-            href="https://www.instagram.com/lindasalec"
-            className="inline-flex items-center gap-1.5 py-2 px-4 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-pearl text-sm font-semibold tracking-wide transition-all hover:-translate-y-1 hover:bg-gradient-to-tr hover:from-yellow-500 hover:via-pink-500 hover:to-purple-500 hover:border-transparent hover:text-white"
-            target="_blank"
-            rel="noopener noreferrer"
-            role="listitem"
-          >
-            <i className="fa-brands fa-instagram"></i> @lindasalec
-          </a>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto animate-fade-in-up justify-center md:justify-start" style={{ animationDelay: '0.8s' }}>
+        <div className="mt-6 flex items-end justify-between border-t border-pearl/10 pt-5">
+          <div>
+            <span className="text-eyebrow text-pearl/40 block">Desde</span>
+            <span className="font-heading text-2xl text-pearl mt-1 block">$ 5.00</span>
+          </div>
           <Link
             href="/tienda"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-body font-semibold text-base tracking-wide bg-gradient-to-r from-gold to-gold-light text-navy shadow-[0_4px_20px_rgba(201,168,76,0.35)] transition-all transform hover:-translate-y-1 hover:shadow-[0_12px_40px_rgba(201,168,76,0.45)] w-full sm:w-auto overflow-hidden relative group"
+            className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-gold text-navy hover:bg-gold-light transition-colors duration-500"
+            aria-label="Ir a la tienda"
           >
-            <span className="absolute inset-0 bg-white/40 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out z-0"></span>
-            <span className="relative z-10 flex items-center gap-2">Explorar Tienda <i className="fa-solid fa-arrow-right"></i></span>
+            <i className="fa-solid fa-arrow-right text-sm" aria-hidden="true" />
           </Link>
-          <a
-            href="#productos"
-            className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-body font-semibold text-base tracking-wide bg-transparent border-2 border-pearl/60 text-pearl backdrop-blur-sm transition-all hover:-translate-y-1 hover:bg-pearl/10 hover:border-pearl hover:text-white w-full sm:w-auto"
-          >
-            Ver Productos
-          </a>
         </div>
       </div>
-
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-30 flex pl-[5%] md:pl-0 flex-col items-center gap-1.5 text-pearl/60 text-xs tracking-widest uppercase font-body animate-fade-in-up hidden md:flex" style={{ animationDelay: '1.5s' }}>
-        <span>Descubrir</span>
-        <div className="w-6 h-6 flex items-center justify-center border-2 border-pearl/40 rounded-full animate-bounce">
-          <i className="fa-solid fa-chevron-down text-[10px]"></i>
-        </div>
-      </div>
-    </header>
+    </motion.aside>
   );
 }

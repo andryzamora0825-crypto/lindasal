@@ -1,85 +1,244 @@
-import React from "react";
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import TiltCard from "@/components/TiltCard";
+
+type Product = {
+  index: string;
+  brand: string;
+  subtitle: string;
+  tagline: string;
+  description: string;
+  features: string[];
+  badge: string;
+  surface: "navy" | "pearl" | "bone";
+  accent: "gold" | "teal" | "warm";
+  hero: string;
+};
+
+const products: Product[] = [
+  {
+    index: "01",
+    brand: "Lindasal",
+    subtitle: "Sal Marina Gourmet",
+    tagline: "La sal que el mar guardó por millones de años.",
+    description:
+      "Sal marina virgen extraída artesanalmente. 40% menos cloruro de sodio que la sal común y 60% de minerales naturales — potasio, calcio, magnesio, hierro y más.",
+    features: ["Gourmet 500 g · 227 g", "Sal Ahumada 227 g", "Sal Parrillera", "Sal con Especias"],
+    badge: "100% Orgánica · Sin aditivos",
+    surface: "bone",
+    accent: "warm",
+    hero: "M",
+  },
+  {
+    index: "02",
+    brand: "Nalleva",
+    subtitle: "Skincare Mineral",
+    tagline: "Tu piel hablando el lenguaje del mar.",
+    description:
+      "Línea de cuidado personal a base de sal marina y minerales naturales. Formulada para potenciar tu piel y bienestar con ingredientes 100% orgánicos.",
+    features: ["Jabón Íntimo Natural", "Derma Tonificador", "Previene envejecimiento", "Regeneración celular"],
+    badge: "Cuidado Natural",
+    surface: "pearl",
+    accent: "gold",
+    hero: "N",
+  },
+  {
+    index: "03",
+    brand: "Aguademar Quinton",
+    subtitle: "Suplemento Mineral",
+    tagline: "El plasma del mar, dentro de ti.",
+    description:
+      "Agua de mar hipertónica e isotónica rica en electrolitos. El complemento ideal para regular el balance celular de tu cuerpo al instante.",
+    features: ["Terapéutica 1 L · Hipertónica", "Rehidratante 1 L · Isotónica", "Restaura plasma", "Energía profunda"],
+    badge: "Máxima energía",
+    surface: "navy",
+    accent: "teal",
+    hero: "Q",
+  },
+];
+
+const accentClasses = {
+  warm: { text: "text-gold-dark", chip: "bg-gold/10 text-gold-dark border-gold/20", line: "from-gold to-gold-light" },
+  gold: { text: "text-gold-dark", chip: "bg-gold/10 text-gold-dark border-gold/20", line: "from-gold-dark to-gold" },
+  teal: { text: "text-teal-light", chip: "bg-teal/15 text-teal-light border-teal/25", line: "from-teal to-teal-light" },
+};
 
 export default function Products() {
   return (
-    <section id="productos" className="py-24 px-[5%] bg-pearl relative overflow-hidden" aria-labelledby="products-title">
-      <div className="max-w-[1200px] mx-auto z-10 relative">
-        <h2 className="font-heading font-bold text-center relative mb-4 text-[clamp(2rem,4vw,3.2rem)] text-navy leading-[1.15] after:content-[''] after:block after:w-[60px] after:h-[3px] after:bg-gradient-to-r after:from-gold after:to-teal after:my-3 after:mx-auto after:rounded-full" id="products-title">
-          Nuestros <span className="bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent">Productos</span>
-        </h2>
-        <p className="font-body text-center text-navy-light/60 max-w-[620px] mx-auto mb-16 text-[1.05rem] leading-[1.8]">
-          Tres líneas orgánicas 100% naturales. Fabricados en Ecuador con ingredientes de fuentes puras: sal marina virgen, agua de mar y cloruro de magnesio.
-        </p>
+    <section id="productos" className="relative bg-bone overflow-hidden" aria-labelledby="products-title">
+      <header className="relative max-w-[1320px] mx-auto px-6 md:px-12 pt-28 pb-16 md:pt-36 md:pb-20 grid grid-cols-12 gap-y-8 md:gap-x-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="col-span-12 md:col-span-7"
+        >
+          <span className="eyebrow">Catálogo · Tres líneas</span>
+          <h2
+            id="products-title"
+            className="mt-6 font-display text-display-lg text-navy"
+          >
+            Nacidas del mar.{" "}
+            <em className="font-light text-navy/65">Pensadas para ti.</em>
+          </h2>
+        </motion.div>
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+          className="col-span-12 md:col-span-5 md:pt-10 font-body text-navy/60 text-[1.02rem] leading-[1.85] max-w-md md:ml-auto"
+        >
+          Tres marcas, una herencia. Sal gourmet para la mesa, skincare mineral para la piel
+          y agua de mar Quinton para tu equilibrio interno.
+        </motion.p>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* LINDASAL */}
-          <article className="bg-white rounded-3xl p-8 border border-transparent shadow-sm transition-all hover:-translate-y-2.5 hover:border-gold/35 hover:shadow-[0_20px_48px_rgba(10,22,40,0.18),0_4px_20px_rgba(201,168,76,0.35)] relative overflow-hidden group">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-teal"></div>
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gold/10 to-teal/10 border border-gold/25 flex items-center justify-center mb-6">
-              <i className="fa-solid fa-mountain-sun text-[1.7rem] bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent"></i>
+      <div className="flex flex-col">
+        {products.map((p, i) => (
+          <ProductRow key={p.brand} product={p} reverse={i % 2 === 1} index={i} isLast={i === products.length - 1} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProductRow({ product: p, reverse, index, isLast }: { product: Product; reverse: boolean; index: number; isLast: boolean }) {
+  const acc = accentClasses[p.accent];
+  const isDark = p.surface === "navy";
+  const surfaceClass =
+    p.surface === "navy"
+      ? "bg-navy text-pearl"
+      : p.surface === "pearl"
+      ? "bg-pearl text-navy"
+      : "bg-bone text-navy";
+
+  return (
+    <section
+      className={`relative ${surfaceClass} ${isDark ? "texture-grain" : ""} overflow-hidden ${!isLast ? "border-b border-navy/[0.06]" : ""}`}
+      aria-labelledby={`product-${p.index}`}
+    >
+      {isDark && (
+        <>
+          <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full bg-teal/[0.08] blur-[140px]" />
+          <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-gold/[0.05] blur-[120px]" />
+        </>
+      )}
+
+      <div className="relative max-w-[1320px] mx-auto px-6 md:px-12 py-20 md:py-32">
+        <div className={`grid grid-cols-12 gap-y-12 md:gap-x-12 items-center ${reverse ? "md:[&>*:first-child]:order-2" : ""}`}>
+          <motion.div
+            initial={{ opacity: 0, x: reverse ? 60 : -60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            className="col-span-12 md:col-span-6 relative"
+          >
+            <TiltCard maxTilt={5} scale={1.015} className="group rounded-[2rem]">
+            <div className={`shine-sweep relative aspect-[4/5] md:aspect-[5/6] rounded-[2rem] overflow-hidden border ${isDark ? "border-pearl/10" : "border-navy/10"}`}>
+              <div className={`absolute inset-0 ${
+                p.accent === "warm"
+                  ? "bg-gradient-to-br from-pearl-dark via-pearl to-bone"
+                  : p.accent === "gold"
+                  ? "bg-gradient-to-br from-pearl via-pearl-dark to-pearl-mid"
+                  : "bg-gradient-to-br from-navy-light via-navy to-navy-deep"
+              }`} />
+              <div className="absolute inset-0 bg-grid opacity-40" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className={`font-display font-light leading-none select-none animate-drift transition-transform duration-1000 group-hover:scale-110 ${
+                    isDark ? "text-pearl/15" : "text-navy/10"
+                  }`}
+                  style={{ fontSize: "clamp(16rem, 30vw, 28rem)" }}
+                  aria-hidden="true"
+                >
+                  {p.hero}
+                </span>
+              </div>
+              <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
+                <div>
+                  <span className={`text-eyebrow ${isDark ? "text-pearl/60" : "text-navy/60"}`}>
+                    Línea {p.index}
+                  </span>
+                  <p className={`mt-2 font-heading text-2xl ${isDark ? "text-pearl" : "text-navy"}`}>
+                    {p.brand}
+                  </p>
+                </div>
+                <span className={`inline-flex items-center justify-center w-12 h-12 rounded-full ${
+                  isDark ? "bg-pearl text-navy" : "bg-navy text-pearl"
+                }`}>
+                  <i className="fa-solid fa-arrow-up-right text-sm" aria-hidden="true" />
+                </span>
+              </div>
             </div>
-            <p className="font-body text-[0.68rem] font-bold tracking-[0.14em] uppercase text-gold mb-1">Lindasal</p>
-            <h3 className="font-heading text-2xl font-semibold text-navy mb-2 leading-[1.2]">Sal Marina Gourmet</h3>
-            <p className="text-[0.9rem] text-navy-light/60 leading-[1.75] mb-6">
-              Sal marina virgen extraída artesanalmente. Contiene <strong>40% menos cloruro de sodio</strong> que la sal común y <strong>60% de minerales naturales</strong>: potasio, calcio, magnesio, borato, sulfato, hierro, fluoruro, bromuro y más.
-            </p>
-            <ul className="flex flex-col gap-2 mb-6">
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Sal Gourmet 500 g y 227 g</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Sal Ahumada funda 227 g</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Sal Parrillera</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Sal con Especias</li>
-            </ul>
-            <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[0.7rem] font-semibold tracking-wider uppercase bg-teal/10 text-teal-dark border border-teal/30">
-              <i className="fa-solid fa-leaf"></i> 100% Orgánica · Sin aditivos
-            </span>
-          </article>
+            </TiltCard>
+          </motion.div>
 
-          {/* NALLEVA */}
-          <article className="bg-white rounded-3xl p-8 border border-transparent shadow-sm transition-all hover:-translate-y-2.5 hover:border-gold/35 hover:shadow-[0_20px_48px_rgba(10,22,40,0.18),0_4px_20px_rgba(201,168,76,0.35)] relative overflow-hidden group">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-teal"></div>
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gold/10 to-teal/10 border border-gold/25 flex items-center justify-center mb-6">
-              <i className="fa-solid fa-spa text-[1.7rem] bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent"></i>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="col-span-12 md:col-span-6"
+          >
+            <div className="flex items-center gap-4">
+              <span className={`font-heading text-5xl font-light leading-none ${isDark ? "text-pearl/30" : "text-navy/25"}`}>
+                {p.index}
+              </span>
+              <span className={`block w-10 h-px ${isDark ? "bg-pearl/30" : "bg-navy/25"}`} />
+              <span className={`text-eyebrow ${acc.text}`}>{p.brand}</span>
             </div>
-            <p className="font-body text-[0.68rem] font-bold tracking-[0.14em] uppercase text-gold mb-1">Nalleva Skincare</p>
-            <h3 className="font-heading text-2xl font-semibold text-navy mb-2 leading-[1.2]">Cuidado Personal</h3>
-            <p className="text-[0.9rem] text-navy-light/60 leading-[1.75] mb-6">
-              Línea de cuidado personal a base de sal marina y minerales naturales. Formulada para potenciar tu piel y bienestar con ingredientes 100% orgánicos.
-            </p>
-            <ul className="flex flex-col gap-2 mb-6">
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Jabón Íntimo natural</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Derma Tonificador</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Previene el envejecimiento prematuro</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Promueve la regeneración celular</li>
-            </ul>
-            <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[0.7rem] font-semibold tracking-wider uppercase bg-teal/10 text-teal-dark border border-teal/30">
-              <i className="fa-solid fa-heart"></i> Cuidado Natural
-            </span>
-          </article>
 
-          {/* AGUADEMAR QUINTON */}
-          <article className="bg-white rounded-3xl p-8 border border-transparent shadow-sm transition-all hover:-translate-y-2.5 hover:border-gold/35 hover:shadow-[0_20px_48px_rgba(10,22,40,0.18),0_4px_20px_rgba(201,168,76,0.35)] relative overflow-hidden group">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-gold to-teal"></div>
-            <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gold/10 to-teal/10 border border-gold/25 flex items-center justify-center mb-6">
-              <i className="fa-solid fa-droplet text-[1.7rem] bg-gradient-to-r from-gold to-teal bg-clip-text text-transparent"></i>
+            <h3
+              id={`product-${p.index}`}
+              className={`mt-6 font-display text-display-md ${isDark ? "text-pearl" : "text-navy"}`}
+            >
+              {p.subtitle.split(" ").map((word, i, arr) => (
+                <span key={i} className={i === arr.length - 1 ? "italic font-light" : ""}>
+                  {word}{" "}
+                </span>
+              ))}
+            </h3>
+            <p className={`mt-4 font-body text-lg italic ${isDark ? "text-pearl/70" : "text-navy/70"}`}>
+              {p.tagline}
+            </p>
+            <p className={`mt-6 font-body leading-[1.85] max-w-prose ${isDark ? "text-pearl/65" : "text-navy/60"}`}>
+              {p.description}
+            </p>
+
+            <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+              {p.features.map((f, i) => (
+                <li
+                  key={f}
+                  className={`flex items-start gap-3 py-3 border-b ${isDark ? "border-pearl/10" : "border-navy/10"}`}
+                >
+                  <span className={`font-body text-[0.65rem] tracking-[0.18em] font-bold mt-1 ${isDark ? "text-pearl/40" : "text-navy/40"}`}>
+                    0{i + 1}
+                  </span>
+                  <span className={`font-body text-[0.92rem] ${isDark ? "text-pearl/85" : "text-navy/80"}`}>
+                    {f}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 flex flex-wrap items-center gap-5">
+              <Link href="/tienda" className={isDark ? "btn-gold" : "btn-ink"}>
+                Comprar ahora
+                <i className="fa-solid fa-arrow-right text-xs" aria-hidden="true" />
+              </Link>
+              <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-[0.65rem] tracking-[0.18em] uppercase font-bold border ${acc.chip}`}>
+                <i className="fa-solid fa-leaf text-[0.6rem]" aria-hidden="true" /> {p.badge}
+              </span>
             </div>
-            <p className="font-body text-[0.68rem] font-bold tracking-[0.14em] uppercase text-gold mb-1">Aguademar Quinton</p>
-            <h3 className="font-heading text-2xl font-semibold text-navy mb-2 leading-[1.2]">Suplemento Rico en Minerales</h3>
-            <p className="text-[0.9rem] text-navy-light/60 leading-[1.75] mb-6">
-              Agua de mar hipertónica e isotónica rica en electrolitos. El complemento dietético ideal para regular el balance celular de tu cuerpo al instante.
-            </p>
-            <ul className="flex flex-col gap-2 mb-6">
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Terapéutica 1000ml (Hipertónica)</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Rehidratante 1000ml (Isotónica)</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Rehidrata activamente las células</li>
-              <li className="text-[0.84rem] text-navy-light/70 flex items-start gap-2"><i className="fa-solid fa-check text-teal text-xs mt-1 shrink-0"></i> Restaura el nivel de plasma</li>
-            </ul>
-            <span className="inline-flex items-center gap-1.5 py-1 px-3 rounded-full text-[0.7rem] font-semibold tracking-wider uppercase bg-teal/10 text-teal-dark border border-teal/30">
-              <i className="fa-solid fa-bolt"></i> Máxima Energía
-            </span>
-          </article>
-
+          </motion.div>
         </div>
       </div>
+
+      <span className={`absolute bottom-0 left-0 h-px w-1/3 bg-gradient-to-r ${acc.line} opacity-30`} aria-hidden="true" />
     </section>
   );
 }

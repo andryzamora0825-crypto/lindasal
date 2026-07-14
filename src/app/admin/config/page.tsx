@@ -1,7 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ImageIcon,
+  CloudUpload,
+  Trash2,
+  CheckCircle2,
+  Palette,
+  Loader2,
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { PageHeader, Panel } from "@/components/admin/AdminUI";
 
 export default function AdminConfigPage() {
   const [logoUrl, setLogoUrl] = useState<string>("");
@@ -17,7 +27,7 @@ export default function AdminConfigPage() {
           .select("value")
           .eq("key", "logo_url")
           .single();
-        
+
         if (data?.value) {
           setLogoUrl(data.value);
         }
@@ -86,84 +96,110 @@ export default function AdminConfigPage() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <header>
-        <h1 className="text-3xl font-bold text-slate-800">Configuración</h1>
-        <p className="text-slate-500 mt-1">Personaliza la identidad de tu marca.</p>
-      </header>
+    <div className="flex flex-col gap-7">
+      <PageHeader
+        eyebrow="Sistema"
+        title="Configuración de"
+        accent="marca."
+        subtitle="Personaliza la identidad visual de tu negocio."
+      />
 
       {/* Logo de Marca */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 bg-slate-50">
-          <h2 className="font-bold text-lg text-slate-800">Logo de Marca</h2>
-          <p className="text-xs text-slate-500 mt-0.5">Sube una imagen PNG sin fondo. Se usará en los recibos PDF y en la identidad del panel.</p>
-        </div>
-
+      <Panel
+        index={1}
+        title="Logo de marca"
+        subtitle="Sube una imagen PNG sin fondo. Se usará en los recibos PDF y en la identidad del panel."
+        icon={<Palette className="w-4 h-4" strokeWidth={1.75} />}
+        className="max-w-3xl"
+      >
         <div className="p-8 flex flex-col items-center gap-6">
           {/* Preview */}
-          <div className="w-[200px] h-[200px] rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden relative group">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+            className="relative w-[220px] h-[220px] rounded-3xl border-2 border-dashed border-pearl-dark bg-gradient-to-br from-pearl/60 to-white flex items-center justify-center overflow-hidden group hover:border-gold/50 transition-colors duration-500"
+          >
+            <div
+              aria-hidden="true"
+              className="absolute -top-10 -right-10 w-28 h-28 rounded-full bg-gold/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+            />
             {logoUrl ? (
               <>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={logoUrl} 
-                  alt="Logo de marca" 
-                  className="w-full h-full object-contain p-4"
+                <img
+                  src={logoUrl}
+                  alt="Logo de marca"
+                  className="w-full h-full object-contain p-5 transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button
+                <div className="absolute inset-0 bg-navy-deep/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={handleRemoveLogo}
-                    className="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-600 transition-colors"
+                    className="bg-red-500 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-red-600 transition-colors inline-flex items-center gap-2"
                   >
-                    <i className="fa-solid fa-trash mr-2"></i>Eliminar
-                  </button>
+                    <Trash2 className="w-4 h-4" strokeWidth={1.75} /> Eliminar
+                  </motion.button>
                 </div>
               </>
             ) : (
-              <div className="text-center text-slate-400">
-                <i className="fa-solid fa-image text-4xl mb-2 block"></i>
-                <p className="text-xs font-medium">Sin logo</p>
+              <div className="text-center text-navy/30">
+                <ImageIcon className="w-10 h-10 mx-auto mb-2 animate-float" strokeWidth={1.25} />
+                <p className="text-xs font-semibold uppercase tracking-[0.18em]">Sin logo</p>
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Upload Button */}
-          <label className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm cursor-pointer transition-all shadow-sm ${
-            uploading 
-              ? "bg-slate-200 text-slate-500 cursor-wait" 
-              : "bg-navy text-white hover:bg-navy/80"
-          }`}>
+          <motion.label
+            whileHover={uploading ? {} : { y: -2 }}
+            whileTap={uploading ? {} : { scale: 0.97 }}
+            className={`flex items-center gap-2.5 px-7 py-3.5 rounded-full font-bold text-sm cursor-pointer transition-colors duration-500 ${
+              uploading
+                ? "bg-pearl text-navy/40 cursor-wait"
+                : "bg-navy text-pearl hover:bg-gold hover:text-navy shadow-raised"
+            }`}
+          >
             {uploading ? (
               <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Subiendo...
               </>
             ) : (
               <>
-                <i className="fa-solid fa-cloud-arrow-up"></i>
-                {logoUrl ? "Cambiar Logo" : "Subir Logo PNG"}
+                <CloudUpload className="w-4 h-4" strokeWidth={1.75} />
+                {logoUrl ? "Cambiar logo" : "Subir logo PNG"}
               </>
             )}
-            <input 
-              type="file" 
-              accept="image/png,image/webp,image/jpeg" 
+            <input
+              type="file"
+              accept="image/png,image/webp,image/jpeg"
               onChange={handleUploadLogo}
               className="hidden"
               disabled={uploading}
             />
-          </label>
+          </motion.label>
 
-          {saved && (
-            <div className="flex items-center gap-2 text-green-600 text-sm font-bold animate-fade-in">
-              <i className="fa-solid fa-check-circle"></i> Logo guardado correctamente
-            </div>
-          )}
+          <AnimatePresence>
+            {saved && (
+              <motion.div
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center gap-2 text-emerald-600 text-sm font-bold bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full"
+              >
+                <CheckCircle2 className="w-4 h-4" /> Logo guardado correctamente
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <p className="text-xs text-slate-400 text-center max-w-sm">
-            Recomendación: PNG transparente de al menos 400×400px. Este logo aparecerá en los <strong>recibos PDF</strong> que generes desde la sección de Ventas.
+          <p className="text-xs text-navy/40 text-center max-w-sm leading-relaxed">
+            Recomendación: PNG transparente de al menos 400×400px. Este logo aparecerá en los{" "}
+            <strong className="text-navy/60">recibos PDF</strong> que generes desde la sección de Ventas.
           </p>
         </div>
-      </div>
+      </Panel>
     </div>
   );
 }
