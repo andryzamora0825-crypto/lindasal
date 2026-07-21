@@ -509,7 +509,7 @@ export default function AdminProductosPage() {
                   </div>
 
                   {/* Precio, Stock y Descuento */}
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-3 gap-2.5 sm:gap-4">
                     <div>
                       <label className="text-[0.62rem] font-bold text-navy/50 uppercase tracking-[0.18em] mb-1.5 block">
                         Precio <span className="text-red-500">*</span>

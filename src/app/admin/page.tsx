@@ -63,7 +63,7 @@ const MODULES = [
 
 export default function AdminDashboardPage() {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6 sm:gap-8">
       <PageHeader
         eyebrow="Panel central"
         title="Bienvenido al"
@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
         custom={1}
         initial="hidden"
         animate="visible"
-        className="relative overflow-hidden rounded-3xl bg-navy texture-grain text-pearl p-8 sm:p-12"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-navy texture-grain text-pearl p-5 sm:p-8 lg:p-12"
       >
         <div
           aria-hidden="true"
@@ -87,36 +87,39 @@ export default function AdminDashboardPage() {
           aria-hidden="true"
           className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-teal/10 blur-[90px] animate-float-slow"
         />
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-8 justify-between">
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center gap-6 sm:gap-8 justify-between">
           <div className="max-w-xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-body text-[0.62rem] font-bold uppercase tracking-[0.22em] text-gold-light mb-5">
+            <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 font-body text-[0.6rem] sm:text-[0.62rem] font-bold uppercase tracking-[0.2em] text-gold-light mb-4 sm:mb-5">
               <Sparkles aria-hidden="true" className="h-3 w-3" />
               Lindasal Admin
             </span>
-            <h2 className="font-heading text-3xl sm:text-4xl leading-[1.1]">
+            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl leading-[1.15]">
               El poder del mar,{" "}
               <span className="italic gradient-text-warm">bajo control.</span>
             </h2>
-            <p className="mt-4 text-pearl/65 text-sm sm:text-base leading-relaxed">
+            <p className="mt-3 sm:mt-4 text-pearl/65 text-[0.85rem] sm:text-base leading-relaxed">
               Desde aquí gestionas productos, revisas el inventario, administras
               ventas y creas publicidad con el módulo de Inteligencia Artificial.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 shrink-0">
+          <div className="flex flex-col xs:flex-row lg:flex-col xl:flex-row gap-2.5 sm:gap-3 shrink-0">
             <Link
               href="/dashboard"
-              className="btn-gold group text-sm !py-3.5 !px-6"
+              className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-light via-gold to-gold-soft px-5 py-2.5 sm:py-3 font-body text-[0.8rem] sm:text-sm font-bold text-navy shadow-[0_8px_24px_-8px_rgba(201,168,76,0.5)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(201,168,76,0.6)]"
             >
-              <LayoutDashboard className="w-4 h-4" aria-hidden="true" />
-              Dashboard Integrado
+              <LayoutDashboard className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="whitespace-nowrap">Dashboard Integrado</span>
               <ArrowRight
-                className="w-3.5 h-3.5 transition-transform duration-500 group-hover:translate-x-1"
+                className="w-3.5 h-3.5 shrink-0 transition-transform duration-500 group-hover:translate-x-1"
                 aria-hidden="true"
               />
             </Link>
-            <Link href="/tienda" className="btn-ghost text-sm !py-3.5 !px-6">
-              <Waves className="w-4 h-4" aria-hidden="true" />
-              Ver la tienda
+            <Link
+              href="/tienda"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-pearl/20 bg-white/5 px-5 py-2.5 sm:py-3 font-body text-[0.8rem] sm:text-sm font-semibold text-pearl/85 backdrop-blur-md transition-all duration-500 hover:-translate-y-0.5 hover:bg-white/10 hover:text-pearl"
+            >
+              <Waves className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="whitespace-nowrap">Ver la tienda</span>
             </Link>
           </div>
         </div>
@@ -129,19 +132,19 @@ export default function AdminDashboardPage() {
           custom={2}
           initial="hidden"
           animate="visible"
-          className="flex items-baseline justify-between mb-6"
+          className="flex items-baseline justify-between mb-4 sm:mb-6"
         >
-          <h3 className="font-heading text-2xl text-navy">Módulos</h3>
+          <h3 className="font-heading text-xl sm:text-2xl text-navy">Módulos</h3>
           <span
             aria-hidden="true"
             className="hidden sm:block h-px flex-1 mx-6 bg-gradient-to-r from-pearl-dark via-gold/30 to-transparent"
           />
-          <span className="text-[0.65rem] uppercase tracking-[0.22em] text-navy/40 font-bold">
+          <span className="text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.2em] text-navy/40 font-bold">
             Acceso rápido
           </span>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
           {MODULES.map((mod, i) => {
             const Icon = mod.icon;
             return (
@@ -156,7 +159,7 @@ export default function AdminDashboardPage() {
               >
                 <Link
                   href={mod.href}
-                  className={`group relative flex h-full flex-col overflow-hidden rounded-3xl bg-white border border-pearl-dark/70 p-7 shadow-soft hover:shadow-raised transition-[box-shadow,border-color] duration-500 ${mod.accent}`}
+                  className={`group relative flex h-full flex-col overflow-hidden rounded-2xl sm:rounded-3xl bg-white border border-pearl-dark/70 p-5 sm:p-7 shadow-soft hover:shadow-raised transition-[box-shadow,border-color] duration-500 ${mod.accent}`}
                 >
                   <div
                     aria-hidden="true"
@@ -164,15 +167,15 @@ export default function AdminDashboardPage() {
                   />
                   <div className="relative flex items-start justify-between">
                     <span
-                      className={`w-13 h-13 rounded-2xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${mod.tone}`}
+                      className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${mod.tone}`}
                     >
-                      <Icon className="w-5.5 h-5.5" strokeWidth={1.75} aria-hidden="true" />
+                      <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={1.75} aria-hidden="true" />
                     </span>
-                    <span className="w-9 h-9 rounded-full border border-pearl-dark/70 flex items-center justify-center text-navy/30 transition-all duration-500 group-hover:bg-navy group-hover:text-gold group-hover:border-navy">
-                      <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                    <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-pearl-dark/70 flex items-center justify-center text-navy/30 transition-all duration-500 group-hover:bg-navy group-hover:text-gold group-hover:border-navy">
+                      <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />
                     </span>
                   </div>
-                  <h4 className="relative mt-6 font-heading text-2xl text-navy flex items-center gap-2">
+                  <h4 className="relative mt-4 sm:mt-6 font-heading text-xl sm:text-2xl text-navy flex items-center gap-2">
                     {mod.title}
                     {mod.badge && (
                       <span className="rounded bg-teal/15 px-1.5 py-0.5 text-[0.55rem] font-bold uppercase tracking-[0.18em] text-teal-dark">
@@ -180,10 +183,10 @@ export default function AdminDashboardPage() {
                       </span>
                     )}
                   </h4>
-                  <p className="relative mt-2 text-sm leading-relaxed text-navy/55">
+                  <p className="relative mt-1.5 sm:mt-2 text-[0.82rem] sm:text-sm leading-relaxed text-navy/55">
                     {mod.desc}
                   </p>
-                  <span className="relative mt-5 inline-flex items-center gap-1.5 text-[0.62rem] font-bold uppercase tracking-[0.22em] text-gold-dark opacity-0 -translate-x-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
+                  <span className="relative mt-4 sm:mt-5 inline-flex items-center gap-1.5 text-[0.62rem] font-bold uppercase tracking-[0.22em] text-gold-dark opacity-0 -translate-x-1 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-0">
                     Abrir módulo
                     <ArrowRight className="w-3 h-3" aria-hidden="true" />
                   </span>
