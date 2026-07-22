@@ -38,7 +38,7 @@ async function generateTextOpenAI(systemPrompt: string): Promise<string> {
       const response = await getOpenAI().chat.completions.create({
         model: "gpt-4o-mini",
         messages: [{ role: "system", content: systemPrompt }],
-        max_tokens: 300,
+        max_tokens: 420,
         temperature: 0.7,
       });
 
@@ -89,6 +89,41 @@ REGLAS:
 }
 
 /**
+ * Director de arte IA: expande un brief corto en una descripción de escena
+ * ultra detallada (escenario, iluminación, cámara, texturas, atmósfera).
+ * Si falla, devuelve cadena vacía y la generación continúa sin bloquear.
+ */
+export async function enhanceImagePrompt(brief: string): Promise<string> {
+  const systemPrompt = `
+Eres un director de arte y fotógrafo publicitario de nivel mundial (campañas para marcas gourmet premium).
+A partir del siguiente brief, escribe UNA descripción de escena ultra detallada para un generador de imágenes IA.
+
+BRIEF:
+${brief}
+
+Tu respuesta DEBE cubrir, en este orden y con etiquetas en MAYÚSCULAS:
+ESCENARIO: lugar concreto, superficie (mármol, madera envejecida, piedra volcánica, lino...), fondo y 3-5 props específicos coherentes con el producto (cristales de sal esparcidos, olas, cítricos frescos, hierbas, vapor, cucharas artesanales...).
+ILUMINACIÓN: tipo (softbox lateral, luz de contorno, hora dorada, claroscuro), dirección y calidad de sombras.
+CÁMARA: lente (ej. 85mm f/2.8, macro), ángulo (cenital, 45°, a nivel), profundidad de campo y bokeh.
+TEXTURAS: micro-detalles visibles (gotas de agua, granos de sal individuales, reflejos, condensación).
+ATMÓSFERA: mood premium y elementos sensoriales (niebla ligera, salpicaduras congeladas, partículas doradas en el aire).
+PALETA: cómo integrar los colores de marca en luz, fondo y acentos.
+
+REGLAS:
+- Máximo 170 palabras, español, texto corrido (sin markdown ni viñetas).
+- Sé ESPECÍFICO y visual; prohibido lo genérico ("fondo bonito", "buena luz").
+- Varía la escena creativamente: nunca propongas un fondo liso vacío.`;
+
+  try {
+    const detail = await generateTextOpenAI(systemPrompt);
+    return detail.trim();
+  } catch (e) {
+    console.error("[SOCIAL] El director de arte IA falló (se continúa sin él):", e);
+    return "";
+  }
+}
+
+/**
  * Generates a social media image using Gemini (Nano Banana 2)
  * Same approach as Estudio IA module
  */
@@ -112,11 +147,16 @@ export async function generateImage(
 
 ${imagePrompt}
 
-IMPORTANTE: Esta imagen es para publicar en redes sociales. Debe ser:
-- Visualmente impactante y profesional
-- Con colores vibrantes y buena composición
-- Sin texto superpuesto (a menos que se pida específicamente)
-- Alta calidad fotográfica o estilo gráfico premium`;
+[ESTÁNDAR VISUAL OBLIGATORIO — calidad de campaña publicitaria internacional]:
+- FOTOGRAFÍA: hiperrealista, nitidez extrema, detalle 8K, alto rango dinámico. NUNCA aspecto de render 3D barato, clipart o ilustración plana.
+- ILUMINACIÓN: profesional con intención — softbox lateral con luz de contorno, o luz natural cinematográfica de hora dorada. Sombras suaves que den volumen y profundidad.
+- COMPOSICIÓN: regla de los tercios o simetría deliberada; el sujeto como héroe absoluto; espacio negativo elegante; capas de profundidad (primer plano, sujeto, fondo).
+- MICRO-DETALLES: texturas visibles y táctiles — cristales individuales, gotas de agua, condensación, reflejos especulares, vapor sutil.
+- ATMÓSFERA: ambiente premium y sensorial — salpicaduras congeladas en el aire, niebla ligera, partículas doradas flotando, cuando aporten a la escena.
+- PROFUNDIDAD: desenfoque de fondo (bokeh) cremoso estilo lente 85mm f/2.8; el fondo acompaña sin competir.
+- COLOR: gradación cohesiva estilo editorial de revista gourmet; colores ricos y saturación controlada.
+- PROHIBIDO: fondos lisos vacíos y aburridos, iluminación dura sin intención, composiciones planas sin profundidad.
+- Sin texto superpuesto (a menos que se pida específicamente).`;
 
   if (aiSettings) {
     const agencyContext = `
@@ -264,8 +304,11 @@ export async function generateFullPost(
   // 1. Generar texto de la publicación adaptativo usando OpenAI
   const caption = await generateCaption({ ...params, customTemplate: undefined });
 
-  // 2. Usar el prompt base o caption generado para la imagen
-  const imagePrompt = params.topic.trim(); // Lo pasamos directo como en Estudio IA
+  // 2. Expandir el tema con el director de arte IA para una escena rica en detalles
+  const artDirection = await enhanceImagePrompt(params.topic.trim());
+  const imagePrompt = artDirection
+    ? `${params.topic.trim()}\n\n[DIRECCIÓN DE ARTE DETALLADA — síguela con precisión]:\n${artDirection}`
+    : params.topic.trim();
 
   // 3. Generar la imagen visual adaptada a la marca y personajes (Nano Banana)
   const { imageUrl, model } = await generateImage(

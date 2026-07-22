@@ -111,7 +111,16 @@ export async function POST(request: Request) {
       }
 
       const discountText = productData.hasDiscount ? `¡OFERTA: ${productData.discountValue}% DE DESCUENTO!` : '';
-      
+
+      // ── Director de arte IA: escena detallada específica para este producto ──
+      const { enhanceImagePrompt } = await import("@/lib/services/ai-content.service");
+      const artDirection = await enhanceImagePrompt(
+        `Anuncio publicitario para redes sociales del producto "${productData.name}" de la marca ${productData.brand} (sal marina orgánica premium de Ecuador / bienestar natural).
+Beneficios del producto: ${productData.description || "producto premium natural"}.
+Instrucción creativa del cliente: "${topic}".
+La escena debe evocar origen marino artesanal ecuatoriano, pureza mineral y lujo natural.`
+      );
+
       const adImagePrompt = `Crea una FOTOGRAFÍA PUBLICITARIA PROFESIONAL DE ALTA GAMA para promocionar este producto.
 Instrucción creativa del usuario: "${topic}".
 
@@ -123,10 +132,14 @@ DATOS DEL PRODUCTO A DESTACAR VISUALMENTE:
 
 REGLAS DE DISEÑO PUBLICITARIO:
 1. MANTÉN FIELMENTE EL LOGOTIPO, FORMA Y DISEÑO ORIGINAL del envase (referencia adjunta).
-2. El producto DEBE aparecer como protagonista absoluto de la imagen.
+2. El producto DEBE aparecer como protagonista absoluto de la imagen, perfectamente enfocado y con iluminación de héroe.
 3. La escena debe ser inmersiva, de alta calidad, invitando a la compra y reflejando los beneficios descritos (${productData.description}).
-4. Si es posible, integra tipográficamente la marca, nombre o precio en el entorno de la imagen de forma elegante.
-5. El tono general de la imagen debe ser sumamente comercial y publicitario.`;
+4. Integra tipográficamente el nombre y el precio como diseño gráfico elegante de revista (serif fina, dorado o blanco según el fondo), nunca como texto plano flotante.
+${productData.hasDiscount ? `5. El badge de descuento "-${productData.discountValue}%" debe verse como etiqueta premium (círculo o cinta dorada), con el precio anterior tachado con elegancia.` : ''}
+6. El tono general debe ser sumamente comercial: que provoque deseo inmediato de compra.
+${artDirection ? `
+[DIRECCIÓN DE ARTE DETALLADA — síguela con precisión]:
+${artDirection}` : ''}`;
 
       try {
         const imgRes = await generateImage(adImagePrompt, userId, "portrait", aiSettings);
