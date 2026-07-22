@@ -102,7 +102,7 @@ export default function AdminDashboardPage() {
               ventas y creas publicidad con el módulo de Inteligencia Artificial.
             </p>
           </div>
-          <div className="flex flex-col xs:flex-row lg:flex-col xl:flex-row gap-2.5 sm:gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-2.5 sm:gap-3 shrink-0">
             <Link
               href="/dashboard"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-gold-light via-gold to-gold-soft px-5 py-2.5 sm:py-3 font-body text-[0.8rem] sm:text-sm font-bold text-navy shadow-[0_8px_24px_-8px_rgba(201,168,76,0.5)] transition-all duration-500 hover:-translate-y-0.5 hover:shadow-[0_16px_36px_-12px_rgba(201,168,76,0.6)]"
@@ -167,9 +167,9 @@ export default function AdminDashboardPage() {
                   />
                   <div className="relative flex items-start justify-between">
                     <span
-                      className={`w-11 h-11 sm:w-13 sm:h-13 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${mod.tone}`}
+                      className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl border flex items-center justify-center transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${mod.tone}`}
                     >
-                      <Icon className="w-5 h-5 sm:w-5.5 sm:h-5.5" strokeWidth={1.75} aria-hidden="true" />
+                      <Icon className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                     </span>
                     <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-pearl-dark/70 flex items-center justify-center text-navy/30 transition-all duration-500 group-hover:bg-navy group-hover:text-gold group-hover:border-navy">
                       <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" aria-hidden="true" />

@@ -16,7 +16,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { mockProducts } from "@/data/mockProducts";
 import { Product } from "@/types/store";
 import {
   PageHeader,
@@ -60,20 +59,20 @@ export default function AdminProductosPage() {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<{ type: "ok" | "error"; text: string } | null>(null);
   const [search, setSearch] = useState("");
+  const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Load products
+  // Load products (sin fallback a mocks: aquí solo se gestionan filas reales de la BD)
   useEffect(() => {
     async function load() {
       setLoading(true);
       try {
-        const { data } = await supabase.from("productos").select("*").order("created_at", { ascending: false });
-        if (data && data.length > 0) {
-          setProducts(data);
-        } else {
-          setProducts(mockProducts);
-        }
-      } catch {
-        setProducts(mockProducts);
+        const { data, error } = await supabase.from("productos").select("*").order("created_at", { ascending: false });
+        if (error) throw error;
+        setProducts(data || []);
+        setLoadError(null);
+      } catch (err: any) {
+        setProducts([]);
+        setLoadError(err?.message || "No se pudo conectar con la base de datos.");
       } finally {
         setLoading(false);
       }
@@ -168,8 +167,11 @@ export default function AdminProductosPage() {
       };
 
       if (editingId) {
-        const { error } = await supabase.from("productos").update(productData).eq("id", editingId);
+        const { data: updated, error } = await supabase.from("productos").update(productData).eq("id", editingId).select();
         if (error) throw error;
+        if (!updated || updated.length === 0) {
+          throw new Error("la base de datos no aplicó el cambio (0 filas afectadas — RLS activo)");
+        }
 
         setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
         setSaveMsg({ type: "ok", text: "✅ Producto actualizado correctamente en Supabase." });
@@ -185,37 +187,10 @@ export default function AdminProductosPage() {
       setTimeout(() => closeModal(), 1500);
     } catch (err: any) {
       console.error(err);
-      alert("ERROR AL GUARDAR EN BASE DE DATOS: " + err.message + "\n\nAsegúrate de haber ejecutado el código SQL para desactivar RLS.");
-
-      const mockImageUrl = imageFile ? URL.createObjectURL(imageFile) : (form.image_url || null);
-
-      const productData = {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        price: parseFloat(form.price),
-        stock: parseInt(form.stock),
-        category: form.category,
-        brand: form.brand,
-        is_featured: form.is_featured,
-        is_active: form.is_active,
-        image_url: mockImageUrl,
-        discount_percentage: Number(form.discount_percentage) || 0,
-      };
-
-      // Fallback: add to local state as mock
-      if (editingId) {
-        setProducts(prev => prev.map(p => p.id === editingId ? { ...p, ...productData } : p));
-        setSaveMsg({ type: "error", text: `❌ Solo se guardó temporalmente. Error: ${err.message}` });
-      } else {
-        const mockId = `local-${Date.now()}`;
-        const localProduct: Product = {
-          id: mockId,
-          ...productData
-        };
-        setProducts(prev => [localProduct, ...prev]);
-        setSaveMsg({ type: "error", text: `❌ Solo se guardó temporalmente. Error: ${err.message}` });
-      }
-      setTimeout(() => closeModal(), 3000);
+      const hint = String(err?.message || "").includes("row-level security")
+        ? " Ejecuta el script supabase/fix-permisos-y-datos.sql en el SQL Editor de Supabase."
+        : "";
+      setSaveMsg({ type: "error", text: `❌ No se pudo guardar: ${err?.message || "error desconocido"}.${hint}` });
     } finally {
       setSaving(false);
     }
@@ -232,10 +207,12 @@ export default function AdminProductosPage() {
       return;
     }
     try {
-      const { error } = await supabase.from("productos").delete().eq("id", id);
+      const { data: deleted, error } = await supabase.from("productos").delete().eq("id", id).select();
       if (error) throw error;
+      if (!deleted || deleted.length === 0) {
+        throw new Error("La base de datos no eliminó nada (0 filas afectadas — RLS activo). Ejecuta supabase/fix-permisos-y-datos.sql en el SQL Editor.");
+      }
       setProducts(prev => prev.filter(p => p.id !== id));
-      // Mostrar alerta de éxito momentánea o usar el state de mensajes si tuvieras uno global
       alert("✅ Producto eliminado correctamente");
     } catch (err: any) {
       console.error(err);
@@ -309,9 +286,19 @@ export default function AdminProductosPage() {
         </motion.button>
       </PageHeader>
 
+      {loadError && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm font-medium text-red-600"
+        >
+          Sin conexión con la base de datos: {loadError}
+        </motion.div>
+      )}
+
       {/* Search */}
       <motion.div variants={fadeUp} custom={1} initial="hidden" animate="visible" className="relative">
-        <Search className="absolute left-4.5 top-1/2 -translate-y-1/2 text-navy/35 w-4 h-4" strokeWidth={1.75} />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-navy/35 w-4 h-4" strokeWidth={1.75} />
         <input
           type="text"
           value={search}
@@ -329,10 +316,82 @@ export default function AdminProductosPage() {
           <EmptyPanelState
             icon={<PackageOpen className="w-8 h-8" strokeWidth={1.25} />}
             title="Sin productos"
-            description="No hay productos que coincidan. Agrega tu primer producto."
+            description="No hay productos en la base de datos que coincidan. Agrega tu primer producto o ejecuta supabase/fix-permisos-y-datos.sql para cargar el catálogo inicial."
           />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Vista móvil: tarjetas */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="md:hidden divide-y divide-pearl/70"
+          >
+            {filteredProducts.map((p) => (
+              <motion.div key={p.id} variants={rowVariant} className="flex gap-3 p-4">
+                {p.image_url ? (
+                  <img
+                    src={p.image_url}
+                    alt={p.name}
+                    className="w-14 h-14 shrink-0 object-cover rounded-xl border border-pearl-dark/60 bg-white"
+                  />
+                ) : (
+                  <div className="w-14 h-14 shrink-0 bg-pearl rounded-xl border border-pearl-dark/60 flex items-center justify-center text-navy/30">
+                    <ImageIcon className="w-5 h-5" strokeWidth={1.5} />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-semibold text-navy text-sm leading-snug">{p.name}</p>
+                    <span className={`shrink-0 text-[0.55rem] font-bold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full ${p.is_active ? "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20" : "bg-pearl text-navy/40 border border-pearl-dark/60"}`}>
+                      {p.is_active ? "Activo" : "Inactivo"}
+                    </span>
+                  </div>
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-navy/55">
+                    {p.brand && (
+                      <span className={`text-[0.55rem] font-extrabold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full ${BRAND_COLORS[p.brand] || "bg-pearl text-navy/60 border border-pearl-dark/60"}`}>
+                        {p.brand === "AGUADEMAR QUINTON" ? "AGUADEMAR" : p.brand}
+                      </span>
+                    )}
+                    <span className="capitalize">{p.category}</span>
+                    <span className={`font-semibold tabular-nums ${p.stock < 10 ? "text-red-500" : ""}`}>Stock: {p.stock}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    <div className="flex items-baseline gap-2">
+                      <span className="font-heading text-lg text-navy tabular-nums">
+                        ${(p.discount_percentage && p.discount_percentage > 0
+                          ? p.price * (1 - p.discount_percentage / 100)
+                          : p.price
+                        ).toFixed(2)}
+                      </span>
+                      {p.discount_percentage && p.discount_percentage > 0 ? (
+                        <span className="text-[0.65rem] text-navy/35 line-through tabular-nums">${p.price.toFixed(2)}</span>
+                      ) : null}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => openEditModal(p)}
+                        className="w-9 h-9 rounded-full bg-pearl text-navy/60 active:bg-navy active:text-gold transition-colors flex items-center justify-center"
+                        title="Editar producto"
+                      >
+                        <Pencil className="w-3.5 h-3.5" strokeWidth={1.75} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p.id, p.name)}
+                        className="w-9 h-9 rounded-full bg-red-500/10 text-red-500 active:bg-red-500 active:text-white transition-colors flex items-center justify-center"
+                        title="Eliminar producto"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" strokeWidth={1.75} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Vista escritorio: tabla */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full min-w-[820px] text-sm">
               <thead>
                 <tr className="border-b border-pearl-dark/50 bg-pearl/40">
@@ -365,7 +424,7 @@ export default function AdminProductosPage() {
                             />
                           ) : (
                             <div className="w-11 h-11 bg-pearl rounded-xl border border-pearl-dark/60 flex items-center justify-center text-navy/30">
-                              <ImageIcon className="w-4.5 h-4.5" strokeWidth={1.5} />
+                              <ImageIcon className="w-4 h-4" strokeWidth={1.5} />
                             </div>
                           )}
                           <div>
@@ -435,6 +494,7 @@ export default function AdminProductosPage() {
               </motion.tbody>
             </table>
           </div>
+          </>
         )}
       </Panel>
 

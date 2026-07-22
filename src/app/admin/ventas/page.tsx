@@ -272,7 +272,81 @@ export default function AdminVentasPage() {
             description="Los próximos pedidos que se hagan en tu tienda aparecerán aquí automáticamente antes de redirigirse a WhatsApp."
           />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Vista móvil: tarjetas */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="md:hidden divide-y divide-pearl/70"
+          >
+            {ventas.map((venta) => {
+              const date = new Date(venta.created_at).toLocaleString('es-ES', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+              });
+              const isCompleted = venta.status === "completado";
+              return (
+                <motion.div key={venta.id} variants={rowVariant} className="p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-bold text-navy text-sm">{venta.customer_name || "Cliente Web"}</p>
+                      <p className="text-[0.68rem] text-navy/40 mt-0.5">{date}</p>
+                    </div>
+                    <span className="font-heading text-lg text-navy tabular-nums shrink-0">
+                      ${Number(venta.total_amount).toFixed(2)}
+                    </span>
+                  </div>
+
+                  <div className="mt-2.5 flex flex-col gap-1">
+                    {venta.items?.map((item, i) => (
+                      <div key={i} className="text-xs text-navy/60 flex items-center gap-2">
+                        <span className="font-bold text-navy bg-gold/15 border border-gold/20 px-1.5 py-0.5 rounded tabular-nums shrink-0">
+                          {item.quantity}x
+                        </span>
+                        <span className="truncate">{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => handleUpdateStatus(venta.id, venta.status)}
+                      className={`text-[0.6rem] font-bold uppercase tracking-[0.08em] px-3 py-1.5 rounded-full border transition-colors inline-flex items-center gap-1.5 ${
+                        isCompleted
+                          ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/25"
+                          : "bg-gold/10 text-gold-dark border-gold/30"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <><Check className="w-3 h-3" /> Completado</>
+                      ) : (
+                        <><Clock className="w-3 h-3" /> Pendiente</>
+                      )}
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handlePrintReceipt(venta)}
+                        className="w-9 h-9 rounded-full bg-pearl text-navy/60 active:bg-navy active:text-gold transition-colors flex items-center justify-center"
+                        title="Generar Recibo PDF"
+                      >
+                        <FileText className="w-4 h-4" strokeWidth={1.75} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(venta.id)}
+                        className="w-9 h-9 rounded-full bg-red-500/10 text-red-500 active:bg-red-500 active:text-white transition-colors flex items-center justify-center"
+                        title="Eliminar registro"
+                      >
+                        <Trash2 className="w-4 h-4" strokeWidth={1.75} />
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Vista escritorio: tabla */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-pearl-dark/50 bg-pearl/40">
@@ -363,6 +437,7 @@ export default function AdminVentasPage() {
               </motion.tbody>
             </table>
           </div>
+          </>
         )}
       </Panel>
     </div>

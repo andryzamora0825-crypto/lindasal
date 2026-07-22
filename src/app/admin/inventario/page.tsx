@@ -122,7 +122,76 @@ export default function AdminInventarioPage() {
             description="Aún no hay productos reales en tu base de datos."
           />
         ) : (
-          <div className="overflow-x-auto">
+          <>
+          {/* Vista móvil: tarjetas */}
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="md:hidden divide-y divide-pearl/70"
+          >
+            {products.map((p) => {
+              const stockValue = (p.stock || 0) * (p.price || 0);
+              const isLowStock = p.stock < 10;
+              const stockPct = Math.max(4, Math.min(100, ((p.stock || 0) / maxStock) * 100));
+              return (
+                <motion.div key={p.id} variants={rowVariant} className="flex gap-3 p-4">
+                  {p.image_url ? (
+                    <img
+                      src={p.image_url}
+                      alt={p.name}
+                      className="w-12 h-12 shrink-0 object-cover rounded-lg border border-pearl-dark/60 bg-white"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 shrink-0 bg-pearl rounded-lg border border-pearl-dark/60 flex items-center justify-center text-navy/30">
+                      <ImageIcon className="w-4 h-4" strokeWidth={1.5} />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="font-semibold text-navy text-sm leading-snug">{p.name}</p>
+                      {isLowStock ? (
+                        <span className="shrink-0 text-[0.55rem] font-bold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 border border-red-500/20 inline-flex items-center gap-1">
+                          <TriangleAlert className="w-2.5 h-2.5" /> Bajo
+                        </span>
+                      ) : (
+                        <span className="shrink-0 text-[0.55rem] font-bold uppercase tracking-[0.08em] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 inline-flex items-center gap-1">
+                          <CheckCircle2 className="w-2.5 h-2.5" /> Óptimo
+                        </span>
+                      )}
+                    </div>
+                    {p.brand && (
+                      <span className={`mt-1.5 inline-block text-[0.55rem] font-extrabold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full ${BRAND_COLORS[p.brand] || "bg-pearl text-navy/60 border border-pearl-dark/60"}`}>
+                        {p.brand === "AGUADEMAR QUINTON" ? "AGUADEMAR" : p.brand}
+                      </span>
+                    )}
+                    <div className="mt-2 flex items-center justify-between gap-3 text-xs">
+                      <div className="flex flex-col gap-1 flex-1 min-w-0">
+                        <span className={`font-heading text-base leading-none tabular-nums ${isLowStock ? "text-red-500" : "text-navy"}`}>
+                          {p.stock} <span className="font-body text-[0.6rem] uppercase tracking-wide text-navy/40">uds</span>
+                        </span>
+                        <div className="h-1 w-full max-w-[120px] rounded-full bg-pearl-dark/50 overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${stockPct}%` }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                            className={`h-full rounded-full ${isLowStock ? "bg-red-400" : "bg-gradient-to-r from-gold to-teal"}`}
+                          />
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-navy/45 tabular-nums">${p.price.toFixed(2)} c/u</p>
+                        <p className="font-bold text-navy tabular-nums">${stockValue.toFixed(2)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Vista escritorio: tabla */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full min-w-[760px] text-sm">
               <thead>
                 <tr className="border-b border-pearl-dark/50 bg-pearl/40">
@@ -207,6 +276,7 @@ export default function AdminInventarioPage() {
               </motion.tbody>
             </table>
           </div>
+          </>
         )}
       </Panel>
     </div>
