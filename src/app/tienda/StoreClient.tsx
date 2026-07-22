@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Product, CartItem } from "@/types/store";
-import { mockProducts } from "@/data/mockProducts";
 import { supabase } from "@/lib/supabase";
 import ProductCard from "./ProductCard";
 import ProductModal from "./ProductModal";
@@ -35,23 +34,21 @@ const SORTS: { id: string; label: string }[] = [
 ];
 
 export default function StoreClient() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
+  // Solo productos reales de la base de datos (gestionados desde el admin panel)
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
 
   useEffect(() => {
     async function loadProducts() {
       try {
         const { data, error } = await supabase.from("productos").select("*");
         if (error) throw error;
-        if (data) {
-          const activeProducts = data.filter((p) => p.is_active !== false);
-          if (activeProducts.length > 0) {
-            setProducts(activeProducts);
-          } else if (data.length > 0) {
-            setProducts([]);
-          }
-        }
+        setProducts((data || []).filter((p) => p.is_active !== false));
       } catch (err) {
         console.error("Error loading products from Supabase", err);
+        setProducts([]);
+      } finally {
+        setLoadingProducts(false);
       }
     }
     loadProducts();
@@ -352,7 +349,27 @@ export default function StoreClient() {
         </p>
       </div>
 
-      {filteredProducts.length === 0 ? (
+      {loadingProducts ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-7" aria-label="Cargando productos">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="rounded-3xl overflow-hidden border border-pearl-dark/40 bg-white animate-pulse"
+              style={{ animationDelay: `${i * 120}ms` }}
+            >
+              <div className="aspect-[4/5] bg-gradient-to-br from-pearl/70 via-bone to-pearl/50" />
+              <div className="p-6 flex flex-col gap-3">
+                <div className="h-2.5 w-1/3 rounded-full bg-pearl" />
+                <div className="h-5 w-3/4 rounded-full bg-pearl-dark/40" />
+                <div className="flex items-end justify-between mt-2">
+                  <div className="h-7 w-20 rounded-full bg-gold/20" />
+                  <div className="h-12 w-12 rounded-full bg-pearl" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : filteredProducts.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
