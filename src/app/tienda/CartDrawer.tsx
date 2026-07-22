@@ -55,7 +55,7 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 surface-glass-dark z-[110]"
+            className="fixed inset-0 surface-glass-dark z-[1100]"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -66,14 +66,14 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-bone z-[120] flex flex-col shadow-floating"
+            className="fixed top-0 right-0 h-full w-full sm:w-[440px] bg-bone z-[1110] flex flex-col shadow-floating"
             role="complementary"
             aria-label="Carrito de compras"
           >
-            <div className="flex items-center justify-between px-7 py-6 border-b border-pearl-dark/60">
+            <div className="flex items-center justify-between px-5 sm:px-7 py-4 sm:py-6 border-b border-pearl-dark/60 bg-white/50">
               <div>
                 <span className="eyebrow">Tu seleccion</span>
-                <h3 className="font-display text-3xl text-navy mt-1">
+                <h3 className="font-display text-2xl sm:text-3xl text-navy mt-0.5 sm:mt-1">
                   Carrito
                   {totalItems > 0 && (
                     <span className="text-gold-dark italic ml-2">({totalItems})</span>
@@ -90,7 +90,7 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-7 py-6 flex flex-col gap-4">
+            <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-4 sm:py-6 flex flex-col gap-3 sm:gap-4">
               {cart.length === 0 ? (
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
@@ -202,13 +202,14 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="px-7 py-6 border-t border-pearl-dark/60 bg-white"
+                className="px-5 sm:px-7 pt-4 sm:pt-6 border-t border-pearl-dark/60 bg-white"
+                style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
               >
-                <div className="flex justify-between items-baseline mb-2">
+                <div className="flex justify-between items-baseline mb-1.5">
                   <span className="text-eyebrow text-navy/60">Total</span>
-                  <span className="font-heading font-semibold text-3xl text-navy">${total.toFixed(2)}</span>
+                  <span className="font-heading font-semibold text-2xl sm:text-3xl text-navy tabular-nums">${total.toFixed(2)}</span>
                 </div>
-                <p className="text-[0.7rem] text-navy/45 mb-5">
+                <p className="text-[0.7rem] text-navy/45 mb-4">
                   El total no incluye costos de envio.
                 </p>
 
@@ -228,8 +229,11 @@ export default function CartDrawer({ isOpen, onClose, cart, onRemove, onChangeQt
                   whileTap={{ scale: 0.98 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                   onClick={() => onCheckout(customerName)}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-navy text-pearl font-semibold py-4 rounded-full hover:bg-navy-light transition-colors duration-300 text-sm tracking-wide"
+                  className="w-full inline-flex items-center justify-center gap-2.5 bg-navy text-pearl font-semibold py-4 rounded-full hover:bg-navy-light transition-colors duration-300 text-sm tracking-wide"
                 >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0 text-[#25D366]" aria-hidden="true">
+                    <path d="M12 2a10 10 0 0 0-8.5 15.32L2 22l4.82-1.45A10 10 0 1 0 12 2Zm0 18.18c-1.5 0-2.97-.4-4.25-1.16l-.3-.18-2.86.86.86-2.79-.2-.32A8.18 8.18 0 1 1 12 20.18Zm4.47-5.8c-.24-.12-1.44-.71-1.66-.79-.22-.08-.39-.12-.55.12-.16.24-.63.79-.77.95-.14.16-.28.18-.53.06-.24-.12-1.03-.38-1.96-1.21-.73-.65-1.22-1.45-1.36-1.69-.14-.24-.02-.38.1-.5.11-.11.25-.28.37-.43.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.3-.22.24-.85.83-.85 2.04 0 1.2.87 2.37 1 2.53.12.16 1.72 2.63 4.17 3.69.58.25 1.04.4 1.39.51.59.19 1.12.16 1.54.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28Z" />
+                  </svg>
                   Finalizar por WhatsApp
                 </motion.button>
               </motion.div>
