@@ -271,7 +271,7 @@ export default function AdminProductosPage() {
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.96 }}
           onClick={handleCleanDuplicates}
-          className="inline-flex items-center gap-2 bg-white border border-pearl-dark/70 text-navy/70 px-5 py-2.5 rounded-full font-semibold text-sm hover:border-gold/50 hover:text-navy transition-colors duration-300 shadow-soft"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-white border border-pearl-dark/70 text-navy/70 px-4 sm:px-5 py-2.5 rounded-full font-semibold text-[0.8rem] sm:text-sm hover:border-gold/50 hover:text-navy transition-colors duration-300 shadow-soft"
           title="Eliminar duplicados automáticamente"
         >
           <Sparkles className="w-4 h-4" strokeWidth={1.75} /> Limpiar repetidos
@@ -280,7 +280,7 @@ export default function AdminProductosPage() {
           whileHover={{ y: -2 }}
           whileTap={{ scale: 0.96 }}
           onClick={openModal}
-          className="inline-flex items-center gap-2 bg-navy text-pearl px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-gold hover:text-navy transition-colors duration-500 shadow-raised"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-navy text-pearl px-4 sm:px-6 py-2.5 rounded-full font-semibold text-[0.8rem] sm:text-sm hover:bg-gold hover:text-navy transition-colors duration-500 shadow-raised"
         >
           <Plus className="w-4 h-4" strokeWidth={2} /> Nuevo producto
         </motion.button>
@@ -501,7 +501,7 @@ export default function AdminProductosPage() {
       {/* ADD/EDIT PRODUCT MODAL */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -515,7 +515,7 @@ export default function AdminProductosPage() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 24, scale: 0.97 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              className="relative bg-white w-full max-w-[600px] rounded-3xl shadow-floating overflow-hidden max-h-[90vh] flex flex-col"
+              className="relative bg-white w-full sm:max-w-[600px] rounded-t-3xl sm:rounded-3xl shadow-floating overflow-hidden max-h-[92vh] sm:max-h-[90vh] flex flex-col"
             >
               {/* Modal Header */}
               <div className="px-6 py-5 border-b border-pearl-dark/50 flex items-center justify-between bg-gradient-to-r from-pearl/60 to-transparent">

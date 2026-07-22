@@ -93,7 +93,7 @@ export default function AdminDashboardPage() {
               <Sparkles aria-hidden="true" className="h-3 w-3" />
               Lindasal Admin
             </span>
-            <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl leading-[1.15]">
+            <h2 className="font-heading text-[1.35rem] sm:text-3xl lg:text-4xl leading-[1.2]">
               El poder del mar,{" "}
               <span className="italic gradient-text-warm">bajo control.</span>
             </h2>

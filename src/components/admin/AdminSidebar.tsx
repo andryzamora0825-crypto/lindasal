@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignOutButton, useUser } from "@clerk/nextjs";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Package,
@@ -12,189 +12,272 @@ import {
   DollarSign,
   Megaphone,
   Settings,
-  Menu,
-  X,
-  ArrowLeft,
   LogOut,
   Waves,
+  Store,
 } from "lucide-react";
 
 type NavItem = {
   label: string;
+  short: string;
   href: string;
   icon: React.ElementType;
-  isSpecial?: boolean;
+  group: string;
+  special?: boolean;
 };
 
-const NAV_GROUPS: { title: string; items: NavItem[] }[] = [
-  {
-    title: "Resumen",
-    items: [{ label: "Dashboard", href: "/admin", icon: LayoutDashboard }],
-  },
-  {
-    title: "Operación",
-    items: [
-      { label: "Productos", href: "/admin/productos", icon: Package },
-      { label: "Inventario", href: "/admin/inventario", icon: Warehouse },
-      { label: "Ventas", href: "/admin/ventas", icon: DollarSign },
-    ],
-  },
-  {
-    title: "Marketing",
-    items: [
-      { label: "Publicidad IA", href: "/admin/social", icon: Megaphone, isSpecial: true },
-    ],
-  },
-  {
-    title: "Sistema",
-    items: [{ label: "Configuración", href: "/admin/config", icon: Settings }],
-  },
+const NAV_ITEMS: NavItem[] = [
+  { label: "Inicio", short: "Inicio", href: "/admin", icon: LayoutDashboard, group: "Resumen" },
+  { label: "Productos", short: "Productos", href: "/admin/productos", icon: Package, group: "Operación" },
+  { label: "Inventario", short: "Stock", href: "/admin/inventario", icon: Warehouse, group: "Operación" },
+  { label: "Ventas", short: "Ventas", href: "/admin/ventas", icon: DollarSign, group: "Operación" },
+  { label: "Publicidad IA", short: "IA", href: "/admin/social", icon: Megaphone, group: "Marketing", special: true },
+  { label: "Configuración", short: "Ajustes", href: "/admin/config", icon: Settings, group: "Sistema" },
 ];
 
-export default function AdminSidebar() {
-  const pathname = usePathname();
-  const { user } = useUser();
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+const GROUPS = ["Resumen", "Operación", "Marketing", "Sistema"];
 
-  useEffect(() => {
-    setIsMobileOpen(false);
-  }, [pathname]);
+function useIsActive() {
+  const pathname = usePathname();
+  return (href: string) =>
+    href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
+}
+
+/* ══════════════ ESCRITORIO: SIDEBAR ══════════════ */
+function DesktopSidebar() {
+  const { user } = useUser();
+  const isActive = useIsActive();
 
   return (
-    <>
-      <button
-        className="md:hidden fixed top-4 left-4 z-[90] w-11 h-11 bg-navy texture-grain text-pearl rounded-xl flex items-center justify-center shadow-[0_8px_24px_-10px_rgba(10,22,40,0.5)]"
-        onClick={() => setIsMobileOpen(!isMobileOpen)}
-        aria-label={isMobileOpen ? "Cerrar navegación" : "Abrir navegación"}
-      >
-        {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-      </button>
-
-      <AnimatePresence>
-        {isMobileOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden fixed inset-0 bg-navy-deep/70 z-[80] backdrop-blur-sm"
-            onClick={() => setIsMobileOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-      </AnimatePresence>
-
-      <aside
-        className={`fixed top-0 left-0 h-full bg-navy texture-grain text-pearl w-[260px] z-[85] flex flex-col border-r border-white/5 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:translate-x-0 ${
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-        aria-label="Navegación administrativa"
-      >
-        <div className="px-6 pt-6 pb-5 border-b border-white/5">
-          <Link href="/admin" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-teal flex items-center justify-center shadow-[0_0_18px_rgba(201,168,76,0.35)]">
-              <Waves className="w-5 h-5 text-navy" strokeWidth={2.5} />
-            </div>
-            <div className="leading-tight">
-              <p className="font-display text-2xl text-pearl tracking-tight">Lindasal</p>
-              <p className="text-[0.6rem] text-gold tracking-[0.28em] uppercase font-bold">
-                Admin Panel
-              </p>
-            </div>
-          </Link>
-        </div>
-
-        {user && (
-          <div className="mx-5 mt-5 mb-2 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={user.imageUrl}
-              alt={user.fullName || "Administrador"}
-              className="w-9 h-9 rounded-full bg-navy-light border border-white/10 object-cover"
-            />
-            <div className="overflow-hidden flex-1 min-w-0">
-              <p className="text-[0.8rem] font-semibold truncate text-pearl">
-                {user.fullName || "Administrador"}
-              </p>
-              <p className="text-[0.65rem] text-pearl/45 truncate">
-                {user.primaryEmailAddress?.emailAddress}
-              </p>
-            </div>
+    <aside
+      className="hidden md:flex fixed top-0 left-0 z-40 h-full w-[264px] flex-col bg-navy texture-grain text-pearl border-r border-white/5"
+      aria-label="Navegación administrativa"
+    >
+      {/* Marca */}
+      <div className="px-6 pt-6 pb-5 border-b border-white/5">
+        <Link href="/admin" className="flex items-center gap-3 group">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold to-teal flex items-center justify-center shadow-[0_0_18px_rgba(201,168,76,0.35)] transition-transform duration-500 group-hover:rotate-6">
+            <Waves className="w-5 h-5 text-navy" strokeWidth={2.5} />
           </div>
-        )}
+          <div className="leading-tight">
+            <p className="font-display text-2xl text-pearl tracking-tight">Lindasal</p>
+            <p className="text-[0.58rem] text-gold tracking-[0.28em] uppercase font-bold">
+              Admin Panel
+            </p>
+          </div>
+        </Link>
+      </div>
 
-        <nav className="flex-1 px-4 pt-4 pb-3 space-y-5 overflow-y-auto">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.title}>
-              <p className="px-3 mb-2 text-[0.6rem] tracking-[0.28em] uppercase font-bold text-pearl/35">
-                {group.title}
-              </p>
-              <ul className="space-y-0.5">
-                {group.items.map((link) => {
-                  const isActive = pathname === link.href;
-                  const Icon = link.icon;
-                  return (
-                    <li key={link.href} className="relative">
-                      {isActive && (
-                        <motion.span
-                          layoutId="admin-active-indicator"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-[3px] rounded-r-full bg-gold shadow-[0_0_12px_rgba(201,168,76,0.6)]"
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                      <Link
-                        href={link.href}
-                        aria-current={isActive ? "page" : undefined}
-                        className={`group flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                          isActive
-                            ? "bg-white/[0.06] text-gold"
-                            : "text-pearl/65 hover:text-pearl hover:bg-white/[0.04]"
+      {/* Usuario */}
+      {user && (
+        <div className="mx-4 mt-4 p-3 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={user.imageUrl}
+            alt={user.fullName || "Administrador"}
+            className="w-9 h-9 rounded-full bg-navy-light border border-gold/30 object-cover"
+          />
+          <div className="overflow-hidden flex-1 min-w-0">
+            <p className="text-[0.8rem] font-semibold truncate text-pearl">
+              {user.fullName || "Administrador"}
+            </p>
+            <p className="text-[0.62rem] text-pearl/40 truncate">
+              {user.primaryEmailAddress?.emailAddress}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Navegación */}
+      <nav className="flex-1 px-4 pt-4 pb-3 space-y-5 overflow-y-auto">
+        {GROUPS.map((group) => (
+          <div key={group}>
+            <p className="px-3 mb-1.5 text-[0.58rem] tracking-[0.28em] uppercase font-bold text-pearl/30">
+              {group}
+            </p>
+            <ul className="space-y-1">
+              {NAV_ITEMS.filter((i) => i.group === group).map((item) => {
+                const active = isActive(item.href);
+                const Icon = item.icon;
+                return (
+                  <li key={item.href} className="relative">
+                    {active && (
+                      <motion.span
+                        layoutId="admin-desktop-active"
+                        className="absolute inset-0 rounded-xl bg-gradient-to-r from-gold/[0.14] to-transparent border border-gold/20"
+                        transition={{ type: "spring", stiffness: 400, damping: 34 }}
+                      />
+                    )}
+                    <Link
+                      href={item.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-colors duration-300 ${
+                        active
+                          ? "text-gold"
+                          : "text-pearl/60 hover:text-pearl hover:bg-white/[0.04]"
+                      }`}
+                    >
+                      <Icon
+                        className={`w-[18px] h-[18px] transition-colors ${
+                          active
+                            ? "text-gold"
+                            : item.special
+                            ? "text-teal/85"
+                            : "text-pearl/50"
                         }`}
-                      >
-                        <Icon
-                          className={`w-[18px] h-[18px] transition-colors ${
-                            isActive
-                              ? "text-gold"
-                              : link.isSpecial
-                              ? "text-teal/85 group-hover:text-teal"
-                              : "text-pearl/55 group-hover:text-pearl/85"
-                          }`}
-                          strokeWidth={1.75}
-                        />
-                        <span className="tracking-tight">{link.label}</span>
-                        {link.isSpecial && !isActive && (
-                          <span className="ml-auto bg-teal/15 text-teal text-[0.55rem] uppercase font-bold tracking-[0.18em] px-1.5 py-0.5 rounded">
-                            IA
-                          </span>
-                        )}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </nav>
+                        strokeWidth={1.75}
+                      />
+                      <span className="tracking-tight">{item.label}</span>
+                      {item.special && !active && (
+                        <span className="ml-auto bg-teal/15 text-teal text-[0.5rem] uppercase font-bold tracking-[0.18em] px-1.5 py-0.5 rounded">
+                          IA
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </nav>
 
-        <div className="p-4 border-t border-white/5 space-y-1">
-          <Link
-            href="/"
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-pearl/65 hover:text-pearl hover:bg-white/[0.04] transition-all text-sm font-medium"
+      {/* Pie */}
+      <div className="p-4 border-t border-white/5 space-y-1">
+        <Link
+          href="/tienda"
+          className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-pearl/60 hover:text-pearl hover:bg-white/[0.04] transition-colors text-sm font-medium"
+        >
+          <Store className="w-[18px] h-[18px]" strokeWidth={1.75} />
+          <span>Ver la tienda</span>
+        </Link>
+        <SignOutButton>
+          <button
+            type="button"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-pearl/60 hover:text-red-300 hover:bg-red-500/[0.08] transition-colors text-sm font-medium"
           >
-            <ArrowLeft className="w-[18px] h-[18px]" strokeWidth={1.75} />
-            <span>Volver a la tienda</span>
+            <LogOut className="w-[18px] h-[18px]" strokeWidth={1.75} />
+            <span>Cerrar sesión</span>
+          </button>
+        </SignOutButton>
+      </div>
+    </aside>
+  );
+}
+
+/* ══════════════ MÓVIL: BARRA SUPERIOR ══════════════ */
+function MobileTopBar() {
+  const isActive = useIsActive();
+  return (
+    <header
+      className="md:hidden fixed top-0 inset-x-0 z-40 bg-navy/95 backdrop-blur-xl border-b border-white/10 text-pearl"
+      role="banner"
+    >
+      <div className="flex items-center justify-between h-14 px-4">
+        <Link href="/admin" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gold to-teal flex items-center justify-center">
+            <Waves className="w-4 h-4 text-navy" strokeWidth={2.5} />
+          </div>
+          <div className="leading-none">
+            <p className="font-display text-lg text-pearl tracking-tight leading-none">Lindasal</p>
+            <p className="text-[0.5rem] text-gold tracking-[0.26em] uppercase font-bold mt-0.5">
+              Admin
+            </p>
+          </div>
+        </Link>
+
+        <div className="flex items-center gap-1.5">
+          <Link
+            href="/admin/config"
+            aria-label="Configuración"
+            className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
+              isActive("/admin/config")
+                ? "bg-gold/15 text-gold"
+                : "text-pearl/60 active:bg-white/10"
+            }`}
+          >
+            <Settings className="w-[18px] h-[18px]" strokeWidth={1.75} />
+          </Link>
+          <Link
+            href="/tienda"
+            aria-label="Ver la tienda"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-pearl/60 active:bg-white/10 transition-colors"
+          >
+            <Store className="w-[18px] h-[18px]" strokeWidth={1.75} />
           </Link>
           <SignOutButton>
             <button
               type="button"
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-pearl/65 hover:text-pearl hover:bg-white/[0.04] transition-all text-sm font-medium"
+              aria-label="Cerrar sesión"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-pearl/60 active:bg-red-500/15 active:text-red-300 transition-colors"
             >
               <LogOut className="w-[18px] h-[18px]" strokeWidth={1.75} />
-              <span>Cerrar sesión</span>
             </button>
           </SignOutButton>
         </div>
-      </aside>
+      </div>
+    </header>
+  );
+}
+
+/* ══════════════ MÓVIL: BARRA INFERIOR (TAB BAR) ══════════════ */
+function MobileBottomNav() {
+  const isActive = useIsActive();
+  // Config vive en la barra superior; abajo van las 5 secciones de trabajo
+  const tabs = NAV_ITEMS.filter((i) => i.href !== "/admin/config");
+
+  return (
+    <nav
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-navy-deep/95 backdrop-blur-xl border-t border-white/10"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      aria-label="Navegación principal"
+    >
+      <ul className="grid grid-cols-5 h-[62px]">
+        {tabs.map((item) => {
+          const active = isActive(item.href);
+          const Icon = item.icon;
+          return (
+            <li key={item.href} className="relative">
+              <Link
+                href={item.href}
+                aria-current={active ? "page" : undefined}
+                className="relative flex h-full flex-col items-center justify-center gap-1"
+              >
+                {active && (
+                  <motion.span
+                    layoutId="admin-mobile-active"
+                    className="absolute top-0 h-[2.5px] w-10 rounded-b-full bg-gold shadow-[0_0_10px_rgba(201,168,76,0.7)]"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <Icon
+                  className={`w-[21px] h-[21px] transition-colors duration-300 ${
+                    active ? "text-gold" : item.special ? "text-teal/70" : "text-pearl/45"
+                  }`}
+                  strokeWidth={active ? 2 : 1.75}
+                />
+                <span
+                  className={`text-[0.58rem] font-bold tracking-wide transition-colors duration-300 ${
+                    active ? "text-gold" : "text-pearl/40"
+                  }`}
+                >
+                  {item.short}
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
+export default function AdminSidebar() {
+  return (
+    <>
+      <DesktopSidebar />
+      <MobileTopBar />
+      <MobileBottomNav />
     </>
   );
 }

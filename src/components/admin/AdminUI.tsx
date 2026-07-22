@@ -72,19 +72,26 @@ export function PageHeader({
       variants={fadeUp}
       initial="hidden"
       animate="visible"
-      className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5"
+      className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3"
     >
-      <div>
-        <span className="eyebrow mb-2">{eyebrow}</span>
-        <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl text-navy">
+      <div className="min-w-0">
+        <span className="inline-flex items-center gap-2 text-[0.58rem] sm:text-[0.62rem] font-bold uppercase tracking-[0.22em] text-gold-dark">
+          <span aria-hidden="true" className="h-1 w-1 rounded-full bg-gold" />
+          {eyebrow}
+        </span>
+        <h1 className="mt-1 font-heading text-[1.55rem] leading-tight sm:text-3xl text-navy">
           {title}{" "}
           {accent && <span className="italic gradient-text-warm">{accent}</span>}
         </h1>
         {subtitle && (
-          <p className="mt-2 sm:mt-2.5 text-[0.82rem] sm:text-base text-navy/55 max-w-xl">{subtitle}</p>
+          <p className="mt-1 text-xs sm:text-sm text-navy/50 max-w-xl">{subtitle}</p>
         )}
       </div>
-      {children && <div className="flex flex-wrap items-center gap-2 sm:gap-3">{children}</div>}
+      {children && (
+        <div className="flex w-full sm:w-auto flex-wrap items-center gap-2 sm:gap-3">
+          {children}
+        </div>
+      )}
     </motion.header>
   );
 }

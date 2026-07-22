@@ -290,15 +290,15 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
       <Panel index={1}>
         <button
           onClick={() => setShowLogosConfig(!showLogosConfig)}
-          className="w-full px-6 py-5 flex items-center justify-between hover:bg-pearl/30 transition-colors duration-300 group"
+          className="w-full px-4 sm:px-6 py-4 sm:py-5 flex items-center justify-between hover:bg-pearl/30 transition-colors duration-300 group"
         >
           <div className="text-left flex items-center gap-3">
             <span className="w-9 h-9 rounded-xl bg-gold/10 border border-gold/20 text-gold-dark flex items-center justify-center transition-transform duration-500 group-hover:-rotate-6">
               <Palette className="w-4 h-4" strokeWidth={1.75} />
             </span>
             <div>
-              <h2 className="font-heading text-xl text-navy leading-tight">Ajustes de logos</h2>
-              <p className="text-xs text-navy/45 mt-0.5">Sube los logos PNG sin fondo para cada marca.</p>
+              <h2 className="font-heading text-lg sm:text-xl text-navy leading-tight">Ajustes de logos</h2>
+              <p className="text-[0.68rem] sm:text-xs text-navy/45 mt-0.5">Sube los logos PNG sin fondo para cada marca.</p>
             </div>
           </div>
           <motion.span
