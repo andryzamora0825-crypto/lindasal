@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Product } from "@/types/store";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Minus, Plus, ShoppingBag, Leaf, MapPin, Package, Droplet, FlaskConical, Sparkles } from "lucide-react";
+import { useBrandLogos, getBrandLogo } from "@/lib/useBrandLogos";
 
 interface ProductModalProps {
   product: Product | null;
@@ -49,6 +50,8 @@ const getCategoryLabel = (cat: string) => {
 export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp }: ProductModalProps) {
   const [quantity, setQuantity] = useState(1);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  const brandLogos = useBrandLogos();
+  const brandLogo = getBrandLogo(brandLogos, product?.brand);
 
   useEffect(() => {
     if (product) {
@@ -133,6 +136,15 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
                   alt={product.name}
                   className="relative z-10 w-full h-full max-h-[190px] sm:max-h-[460px] object-contain mix-blend-multiply"
                 />
+              ) : brandLogo ? (
+                <motion.img
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.15, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  src={brandLogo}
+                  alt={getBrandLabel(product.brand) || "Marca"}
+                  className="relative z-10 max-w-[55%] max-h-[60%] sm:max-w-[60%] sm:max-h-[50%] object-contain opacity-90 mix-blend-multiply"
+                />
               ) : (
                 <div className="relative z-10 text-navy/20">
                   <BrandIcon brand={product.brand} className="w-16 h-16 sm:w-32 sm:h-32" />
@@ -140,7 +152,12 @@ export default function ProductModal({ product, onClose, onAdd, onOrderWhatsApp 
               )}
 
               <div className="absolute top-4 left-4 sm:top-6 sm:left-6 flex flex-row sm:flex-col gap-2 z-20">
-                {getBrandLabel(product.brand) && (
+                {brandLogo && product.image_url ? (
+                  <span className="flex items-center justify-center h-9 px-3 rounded-full bg-white/90 backdrop-blur-md shadow-soft border border-pearl-dark/30" title={getBrandLabel(product.brand) || undefined}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={brandLogo} alt={getBrandLabel(product.brand) || "Marca"} className="h-6 w-auto max-w-[90px] object-contain" />
+                  </span>
+                ) : getBrandLabel(product.brand) && (
                   <span className="text-eyebrow text-[0.65rem] text-navy/70 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full">
                     {getBrandLabel(product.brand)}
                   </span>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import TiltCard from "@/components/TiltCard";
+import { useBrandLogos, getBrandLogo } from "@/lib/useBrandLogos";
 
 type Product = {
   index: string;
@@ -109,6 +110,8 @@ export default function Products() {
 function ProductRow({ product: p, reverse, index, isLast }: { product: Product; reverse: boolean; index: number; isLast: boolean }) {
   const acc = accentClasses[p.accent];
   const isDark = p.surface === "navy";
+  const brandLogos = useBrandLogos();
+  const brandLogo = getBrandLogo(brandLogos, p.brand);
   const surfaceClass =
     p.surface === "navy"
       ? "bg-navy text-pearl"
@@ -147,6 +150,17 @@ function ProductRow({ product: p, reverse, index, isLast }: { product: Product; 
                   : "bg-gradient-to-br from-navy-light via-navy to-navy-deep"
               }`} />
               <div className="absolute inset-0 bg-grid opacity-40" />
+              {brandLogo && (
+                <span className="absolute top-5 left-5 z-10 flex items-center justify-center h-12 px-4 rounded-2xl bg-white/90 backdrop-blur-md shadow-soft border border-white/60">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={brandLogo}
+                    alt={`Logo ${p.brand}`}
+                    loading="lazy"
+                    className="h-7 w-auto max-w-[110px] object-contain"
+                  />
+                </span>
+              )}
               <div className="absolute inset-0 flex items-center justify-center">
                 <span
                   className={`font-display font-light leading-none select-none animate-drift transition-transform duration-1000 group-hover:scale-110 ${

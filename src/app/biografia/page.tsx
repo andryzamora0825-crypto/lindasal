@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
 import ScrollProgress from "@/components/landing/ScrollProgress";
+import { useBrandLogos, getBrandLogo } from "@/lib/useBrandLogos";
 
 /* ── Riel de capítulos (solo escritorio ancho): navegación de lectura ── */
 const CHAPTERS = [
@@ -366,6 +367,7 @@ function MagazineNav() {
 export default function BiografiaPage() {
   const heroRef = useRef<HTMLElement | null>(null);
   const reduceMotion = useReducedMotion();
+  const brandLogos = useBrandLogos();
 
   const { scrollYProgress: heroProgress } = useScroll({
     target: heroRef,
@@ -592,14 +594,31 @@ export default function BiografiaPage() {
                     Marcas
                   </span>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {infoCard.marcas.map((m) => (
-                      <span
-                        key={m}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-body text-[0.7rem] font-semibold text-pearl/80"
-                      >
-                        {m}
-                      </span>
-                    ))}
+                    {infoCard.marcas.map((m) => {
+                      const logo = getBrandLogo(brandLogos, m);
+                      return logo ? (
+                        <span
+                          key={m}
+                          title={m}
+                          className="flex items-center justify-center h-9 px-3 rounded-full bg-white/95 shadow-[0_4px_16px_-6px_rgba(0,0,0,0.4)]"
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={logo}
+                            alt={`Logo ${m}`}
+                            loading="lazy"
+                            className="h-5 w-auto max-w-[88px] object-contain"
+                          />
+                        </span>
+                      ) : (
+                        <span
+                          key={m}
+                          className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-body text-[0.7rem] font-semibold text-pearl/80"
+                        >
+                          {m}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

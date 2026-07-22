@@ -5,6 +5,7 @@ import { Product } from "@/types/store";
 import { motion } from "framer-motion";
 import { Plus, Eye, Droplet, FlaskConical, Sparkles } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
+import { useBrandLogos, getBrandLogo } from "@/lib/useBrandLogos";
 
 interface ProductCardProps {
   product: Product;
@@ -50,6 +51,8 @@ const BrandIcon: React.FC<{ brand?: string; className?: string }> = ({ brand, cl
 export default function ProductCard({ product, onQuickView, onAdd, featured = false }: ProductCardProps) {
   const isLowStock = product.stock < 10;
   const brandLabel = getBrandLabel(product.brand);
+  const brandLogos = useBrandLogos();
+  const brandLogo = getBrandLogo(brandLogos, product.brand);
   const hasDiscount = !!(product.discount_percentage && product.discount_percentage > 0);
   const finalPrice = hasDiscount
     ? product.price * (1 - (product.discount_percentage as number) / 100)
@@ -75,6 +78,16 @@ export default function ProductCard({ product, onQuickView, onAdd, featured = fa
             alt={product.name}
             className="w-full h-full object-contain p-8 sm:p-10 mix-blend-multiply group-hover:scale-105 transition-transform duration-[900ms] ease-out"
           />
+        ) : brandLogo ? (
+          <div className="w-full h-full flex items-center justify-center p-10 sm:p-14 group-hover:scale-105 transition-transform duration-[900ms] ease-out">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={brandLogo}
+              alt={brandLabel || "Marca"}
+              loading="lazy"
+              className="max-w-[70%] max-h-[55%] object-contain opacity-90 mix-blend-multiply"
+            />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-navy/15 group-hover:text-navy/25 group-hover:scale-105 transition-all duration-[900ms] ease-out">
             <BrandIcon brand={product.brand} className="w-24 h-24" />
@@ -82,7 +95,12 @@ export default function ProductCard({ product, onQuickView, onAdd, featured = fa
         )}
 
         <div className="absolute top-4 left-4 flex flex-col items-start gap-2 z-10">
-          {brandLabel && (
+          {brandLogo && product.image_url ? (
+            <span className="flex items-center justify-center h-8 px-2.5 rounded-full bg-white/90 backdrop-blur-md shadow-soft border border-pearl-dark/30" title={brandLabel || undefined}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={brandLogo} alt={brandLabel || "Marca"} loading="lazy" className="h-5 w-auto max-w-[76px] object-contain" />
+            </span>
+          ) : brandLabel && (
             <span className="text-eyebrow text-[0.6rem] text-navy/70 bg-white/80 backdrop-blur-md px-2.5 py-1 rounded-full">
               {brandLabel}
             </span>
