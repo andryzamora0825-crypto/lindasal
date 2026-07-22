@@ -214,7 +214,7 @@ export default function AdminVentasPage() {
   }, 0);
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-5 sm:gap-7">
       <PageHeader
         eyebrow="Operación"
         title="Historial de"

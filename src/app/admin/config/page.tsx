@@ -96,7 +96,7 @@ export default function AdminConfigPage() {
   };
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-5 sm:gap-7">
       <PageHeader
         eyebrow="Sistema"
         title="Configuración de"
@@ -112,7 +112,7 @@ export default function AdminConfigPage() {
         icon={<Palette className="w-4 h-4" strokeWidth={1.75} />}
         className="max-w-3xl"
       >
-        <div className="p-8 flex flex-col items-center gap-6">
+        <div className="p-5 sm:p-8 flex flex-col items-center gap-5 sm:gap-6">
           {/* Preview */}
           <motion.div
             initial={{ opacity: 0, scale: 0.94 }}

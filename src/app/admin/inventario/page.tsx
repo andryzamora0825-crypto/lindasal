@@ -60,7 +60,7 @@ export default function AdminInventarioPage() {
   const maxStock = Math.max(...products.map(p => p.stock || 0), 1);
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-5 sm:gap-7">
       <PageHeader
         eyebrow="Operación"
         title="Inventario y"

@@ -260,7 +260,7 @@ export default function AdminProductosPage() {
   };
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-5 sm:gap-7">
       <PageHeader
         eyebrow="Catálogo"
         title="Tus"

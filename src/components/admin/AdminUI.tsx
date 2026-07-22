@@ -81,10 +81,10 @@ export function PageHeader({
           {accent && <span className="italic gradient-text-warm">{accent}</span>}
         </h1>
         {subtitle && (
-          <p className="mt-2.5 text-sm sm:text-base text-navy/55 max-w-xl">{subtitle}</p>
+          <p className="mt-2 sm:mt-2.5 text-[0.82rem] sm:text-base text-navy/55 max-w-xl">{subtitle}</p>
         )}
       </div>
-      {children && <div className="flex flex-wrap items-center gap-3">{children}</div>}
+      {children && <div className="flex flex-wrap items-center gap-2 sm:gap-3">{children}</div>}
     </motion.header>
   );
 }
@@ -178,7 +178,7 @@ export function Panel({
       custom={index}
       initial="hidden"
       animate="visible"
-      className={`bg-white rounded-3xl border border-pearl-dark/70 shadow-soft overflow-hidden ${className}`}
+      className={`bg-white rounded-2xl sm:rounded-3xl border border-pearl-dark/70 shadow-soft overflow-hidden ${className}`}
     >
       {(title || actions) && (
         <div className="px-4 sm:px-6 py-4 border-b border-pearl-dark/50 bg-gradient-to-r from-pearl/60 to-transparent flex items-center justify-between gap-3 sm:gap-4 flex-wrap">
@@ -232,12 +232,12 @@ export function EmptyPanelState({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="p-16 flex flex-col items-center justify-center text-center"
+      className="px-6 py-12 sm:p-16 flex flex-col items-center justify-center text-center"
     >
-      <div className="w-20 h-20 rounded-full bg-pearl flex items-center justify-center mb-6 text-navy/30 animate-float">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-pearl flex items-center justify-center mb-5 sm:mb-6 text-navy/30 animate-float">
         {icon}
       </div>
-      <h3 className="font-heading text-2xl text-navy mb-2">{title}</h3>
+      <h3 className="font-heading text-xl sm:text-2xl text-navy mb-2">{title}</h3>
       <p className="text-sm text-navy/50 max-w-[400px] leading-relaxed">{description}</p>
       {children && <div className="mt-6">{children}</div>}
     </motion.div>

@@ -269,7 +269,7 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
   };
 
   return (
-    <div className="flex flex-col gap-7">
+    <div className="flex flex-col gap-5 sm:gap-7">
       <PageHeader
         eyebrow="Marketing"
         title="Publicidad de"
@@ -372,7 +372,7 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
           custom={2}
           initial="hidden"
           animate="visible"
-          className="bg-white rounded-3xl border border-pearl-dark/70 shadow-soft p-6 sm:p-7 flex flex-col gap-5"
+          className="bg-white rounded-2xl sm:rounded-3xl border border-pearl-dark/70 shadow-soft p-4 sm:p-7 flex flex-col gap-4 sm:gap-5"
         >
           <h3 className="font-heading text-xl text-navy flex items-center gap-2.5">
             <span className="w-8 h-8 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center">
@@ -579,7 +579,7 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
           custom={3}
           initial="hidden"
           animate="visible"
-          className="bg-gradient-to-b from-pearl/50 to-white rounded-3xl border border-pearl-dark/70 shadow-soft p-6 sm:p-7 flex flex-col"
+          className="bg-gradient-to-b from-pearl/50 to-white rounded-2xl sm:rounded-3xl border border-pearl-dark/70 shadow-soft p-4 sm:p-7 flex flex-col"
         >
           <h3 className="font-heading text-xl text-navy mb-4 flex items-center gap-2.5">
             <span className="w-8 h-8 rounded-lg bg-navy text-gold flex items-center justify-center">
