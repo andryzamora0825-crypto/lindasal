@@ -12,6 +12,7 @@ import {
   FileText,
   Trash2,
   ShoppingCart,
+  Download,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
@@ -139,58 +140,111 @@ export default function AdminVentasPage() {
         <head>
           <title>Recibo de Pedido - Lindasal</title>
           <style>
-            body { font-family: 'Courier New', Courier, monospace; color: #333; max-width: 350px; margin: 0 auto; padding: 20px; }
-            h1 { font-size: 1.5rem; text-align: center; margin-bottom: 5px; font-weight: bold; letter-spacing: 2px; }
-            p { font-size: 0.9rem; margin: 5px 0; }
-            .text-center { text-align: center; }
-            .divider { border-top: 1px dashed #333; margin: 15px 0; }
-            table { border-collapse: collapse; font-size: 0.9rem; width: 100%; }
-            th { text-align: left; border-bottom: 1px solid #333; padding-bottom: 5px; }
-            .total { font-weight: bold; font-size: 1.2rem; text-align: right; margin-top: 15px; }
-            .footer { font-size: 0.8rem; text-align: center; margin-top: 30px; color: #666; font-style: italic; }
-            .logo { max-width: 150px; max-height: 80px; margin: 0 auto 10px; display: block; }
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+              font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+              color: #0a1628;
+              background: #f8f5f0;
+              padding: 24px 16px;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            .sheet {
+              max-width: 420px; margin: 0 auto; background: #ffffff;
+              border-radius: 18px; overflow: hidden;
+              border: 1px solid #e8dfd0;
+              box-shadow: 0 12px 40px -12px rgba(10,22,40,0.15);
+            }
+            .head {
+              background: #0a1628; color: #f5f0e8;
+              padding: 26px 24px 22px; text-align: center; position: relative;
+            }
+            .head::after {
+              content: ""; display: block; position: absolute; left: 0; right: 0; bottom: 0;
+              height: 4px; background: linear-gradient(90deg, #a8832a, #c9a84c, #e8d08a, #7ecac3);
+            }
+            .logo { max-width: 120px; max-height: 64px; margin: 0 auto 10px; display: block; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35)); }
+            h1 { font-family: Georgia, 'Times New Roman', serif; font-size: 1.7rem; letter-spacing: 6px; font-weight: 600; }
+            .head .sub { font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase; color: #c9a84c; margin-top: 6px; font-weight: 700; }
+            .head .sub2 { font-size: 0.62rem; letter-spacing: 2px; color: rgba(245,240,232,0.55); margin-top: 3px; }
+            .meta { display: flex; padding: 16px 24px; gap: 12px; border-bottom: 1px dashed #e8dfd0; }
+            .meta div { flex: 1; }
+            .meta .k { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; color: #a8832a; font-weight: 700; margin-bottom: 3px; }
+            .meta .v { font-size: 0.78rem; font-weight: 600; }
+            table { border-collapse: collapse; width: 100%; }
+            .items { padding: 6px 24px 16px; }
+            .items th {
+              text-align: left; font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px;
+              color: rgba(10,22,40,0.45); font-weight: 700; padding: 12px 0 8px; border-bottom: 1.5px solid #0a1628;
+            }
+            .items th:last-child { text-align: right; }
+            .items td { padding: 9px 0; border-bottom: 1px dashed #e8dfd0; font-size: 0.82rem; }
+            .items td:last-child { text-align: right; font-weight: 700; }
+            .totalband {
+              margin: 4px 24px 20px; background: #0a1628; color: #f5f0e8;
+              border-radius: 12px; padding: 14px 18px;
+              display: flex; align-items: center; justify-content: space-between;
+            }
+            .totalband .lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(245,240,232,0.6); font-weight: 700; }
+            .totalband .amt { font-family: Georgia, serif; font-size: 1.45rem; color: #e8d08a; font-weight: 600; }
+            .foot { text-align: center; padding: 0 24px 24px; }
+            .foot .thanks { font-family: Georgia, serif; font-style: italic; font-size: 0.95rem; color: rgba(10,22,40,0.75); }
+            .foot .legal { font-size: 0.58rem; color: rgba(10,22,40,0.4); margin-top: 8px; line-height: 1.5; }
+            .waves { text-align: center; padding-bottom: 4px; color: #7ecac3; font-size: 0.8rem; letter-spacing: 4px; }
             @media print {
-              body { padding: 0; }
+              body { background: #ffffff; padding: 0; }
+              .sheet { box-shadow: none; border: none; border-radius: 0; max-width: 100%; }
             }
           </style>
         </head>
         <body>
-          <div class="text-center">
-            ${logoUrl ? `<img src="${logoUrl}" alt="Logo" class="logo" />` : ''}
-            <h1>LINDASAL</h1>
-            <p>Sal Marina 100% Orgánica</p>
-            <p>Ecuador</p>
-          </div>
+          <div class="sheet">
+            <div class="head">
+              ${logoUrl ? `<img src="${logoUrl}" alt="Logo" class="logo" />` : ''}
+              <h1>LINDASAL</h1>
+              <p class="sub">Sal Marina 100% Orgánica</p>
+              <p class="sub2">Ecuador</p>
+            </div>
 
-          <div class="divider"></div>
+            <div class="meta">
+              <div>
+                <p class="k">Fecha</p>
+                <p class="v">${date}</p>
+              </div>
+              <div>
+                <p class="k">Cliente</p>
+                <p class="v">${venta.customer_name || 'Consumidor Final'}</p>
+              </div>
+              <div>
+                <p class="k">Pedido #</p>
+                <p class="v">${venta.id.split('-')[0].toUpperCase()}</p>
+              </div>
+            </div>
 
-          <p><strong>Fecha:</strong> ${date}</p>
-          <p><strong>Cliente:</strong> ${venta.customer_name || 'Consumidor Final'}</p>
-          <p><strong>Pedido #:</strong> ${venta.id.split('-')[0].toUpperCase()}</p>
+            <div class="items">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsHtml}
+                </tbody>
+              </table>
+            </div>
 
-          <div class="divider"></div>
+            <div class="totalband">
+              <span class="lbl">Total</span>
+              <span class="amt">$${Number(venta.total_amount).toFixed(2)}</span>
+            </div>
 
-          <table>
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th style="text-align: right;">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-          </table>
-
-          <div class="total">
-            TOTAL: $${Number(venta.total_amount).toFixed(2)}
-          </div>
-
-          <div class="divider"></div>
-
-          <div class="footer">
-            <p>¡Gracias por elegir lo natural!</p>
-            <p style="font-size: 0.65rem; margin-top: 10px;">Este es un comprobante de pedido interno, no tiene validez tributaria para el SRI.</p>
+            <div class="foot">
+              <p class="thanks">¡Gracias por elegir lo natural!</p>
+              <p class="legal">Este es un comprobante de pedido interno, no tiene validez tributaria para el SRI.</p>
+            </div>
+            <div class="waves">~ ~ ~</div>
           </div>
 
           <script>
@@ -200,6 +254,34 @@ export default function AdminVentasPage() {
       </html>
     `);
     printWindow.document.close();
+  };
+
+  // Exportar historial de ventas a CSV (con BOM para Excel)
+  const handleExportCsv = () => {
+    if (ventas.length === 0) {
+      alert("No hay ventas para exportar.");
+      return;
+    }
+    const rows = [
+      ["Fecha", "Cliente", "Productos", "Total", "Estado"],
+      ...ventas.map((v) => [
+        new Date(v.created_at).toLocaleString("es-ES"),
+        v.customer_name || "Cliente Web",
+        (v.items || []).map((it) => `${it.quantity}x ${it.name}`).join(" | "),
+        Number(v.total_amount).toFixed(2),
+        v.status,
+      ]),
+    ];
+    const csv = rows
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lindasal_ventas_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   // Cálculos de KPI
@@ -262,6 +344,15 @@ export default function AdminVentasPage() {
         title="Últimos pedidos"
         subtitle="Los pedidos web se registran antes de redirigir a WhatsApp"
         icon={<ShoppingCart className="w-4 h-4" strokeWidth={1.75} />}
+        actions={
+          <button
+            onClick={handleExportCsv}
+            className="inline-flex items-center gap-1.5 rounded-full border border-teal/25 bg-teal/10 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-teal-dark hover:bg-teal/20 hover:-translate-y-0.5 transition-all duration-300"
+            title="Descargar historial en CSV (Excel)"
+          >
+            <Download className="w-3.5 h-3.5" strokeWidth={2} /> CSV
+          </button>
+        }
       >
         {loading ? (
           <BrandLoader label="Cargando ventas…" />

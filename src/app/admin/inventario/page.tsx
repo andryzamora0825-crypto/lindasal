@@ -10,6 +10,7 @@ import {
   PackageOpen,
   ImageIcon,
   CheckCircle2,
+  Download,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { Product } from "@/types/store";
@@ -58,6 +59,36 @@ export default function AdminInventarioPage() {
   const totalInventoryValue = products.reduce((sum, p) => sum + ((p.stock || 0) * (p.price || 0)), 0);
   const lowStockCount = products.filter(p => p.stock < 10).length;
   const maxStock = Math.max(...products.map(p => p.stock || 0), 1);
+
+  // Exportar inventario a CSV (con BOM para Excel)
+  const handleExportCsv = () => {
+    if (products.length === 0) {
+      alert("No hay productos para exportar.");
+      return;
+    }
+    const rows = [
+      ["Producto", "Marca", "Categoría", "Precio", "Stock", "Valor total", "Activo"],
+      ...products.map((p) => [
+        p.name,
+        p.brand || "",
+        p.category,
+        p.price.toFixed(2),
+        String(p.stock),
+        ((p.stock || 0) * (p.price || 0)).toFixed(2),
+        p.is_active ? "Sí" : "No",
+      ]),
+    ];
+    const csv = rows
+      .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
+      .join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lindasal_inventario_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="flex flex-col gap-5 sm:gap-7">
@@ -108,9 +139,18 @@ export default function AdminInventarioPage() {
         subtitle="Existencias y valor por referencia"
         icon={<Boxes className="w-4 h-4" strokeWidth={1.75} />}
         actions={
-          <span className="text-[0.6rem] font-bold bg-navy text-gold px-3.5 py-1.5 rounded-full uppercase tracking-[0.18em]">
-            Ordenado por menor stock
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="hidden lg:inline-block text-[0.6rem] font-bold bg-navy text-gold px-3.5 py-1.5 rounded-full uppercase tracking-[0.18em]">
+              Ordenado por menor stock
+            </span>
+            <button
+              onClick={handleExportCsv}
+              className="inline-flex items-center gap-1.5 rounded-full border border-teal/25 bg-teal/10 px-3.5 py-1.5 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-teal-dark hover:bg-teal/20 hover:-translate-y-0.5 transition-all duration-300"
+              title="Descargar inventario en CSV (Excel)"
+            >
+              <Download className="w-3.5 h-3.5" strokeWidth={2} /> CSV
+            </button>
+          </div>
         }
       >
         {loading ? (

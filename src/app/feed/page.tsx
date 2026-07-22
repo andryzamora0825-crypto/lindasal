@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { FeedPost } from "@/data/mockPosts";
 import TiltCard from "@/components/TiltCard";
+import ShareMenu from "@/components/ShareMenu";
 
 /* Icono Instagram local: lucide-react eliminó los iconos de marcas */
 function Instagram({ className, ...props }: React.SVGProps<SVGSVGElement>) {
@@ -220,6 +221,9 @@ function PostMosaicCard({
           </div>
         )}
       </a>
+      <div className="absolute right-3 top-3 z-30">
+        <ShareMenu text={post.content.slice(0, 140)} />
+      </div>
       </TiltCard>
     </motion.article>
   );
@@ -268,6 +272,9 @@ function FeaturedPost({ post }: { post: FeedPost }) {
             <Sparkles aria-hidden="true" className="h-3 w-3" />
             Destacado
           </span>
+          <div className="absolute right-4 top-4 z-30">
+            <ShareMenu text={post.content.slice(0, 140)} />
+          </div>
         </div>
 
         <div className="relative flex flex-col justify-between gap-8 p-8 lg:col-span-2 lg:p-12">

@@ -9,11 +9,13 @@ import Warnings from "@/components/landing/Warnings";
 import CTA from "@/components/landing/CTA";
 import Footer from "@/components/landing/Footer";
 import ScrollProgress from "@/components/landing/ScrollProgress";
+import WhatsAppFab from "@/components/landing/WhatsAppFab";
 
 export default function Home() {
   return (
     <main className="flex flex-col bg-[#f8f5f0] min-h-screen overflow-x-hidden selection:bg-gold/30 selection:text-navy">
       <ScrollProgress />
+      <WhatsAppFab />
       <Navbar />
       <Hero />
       <DeliveryBanner />

@@ -29,6 +29,69 @@ import {
   Home,
 } from "lucide-react";
 import TiltCard from "@/components/TiltCard";
+import ScrollProgress from "@/components/landing/ScrollProgress";
+
+/* ── Riel de capítulos (solo escritorio ancho): navegación de lectura ── */
+const CHAPTERS = [
+  { id: "cap-historia", label: "Historia" },
+  { id: "cap-hitos", label: "Hitos" },
+  { id: "cap-filosofia", label: "Filosofía" },
+  { id: "cap-bienestar", label: "Bienestar" },
+  { id: "cap-terapias", label: "Terapias" },
+  { id: "cap-sal", label: "La sal" },
+  { id: "cap-documental", label: "Documental" },
+];
+
+function ChapterRail() {
+  const [active, setActive] = useState<string>("");
+
+  useEffect(() => {
+    const handler = () => {
+      let current = "";
+      for (const c of CHAPTERS) {
+        const el = document.getElementById(c.id);
+        if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.45) {
+          current = c.id;
+        }
+      }
+      setActive(current);
+    };
+    handler();
+    window.addEventListener("scroll", handler, { passive: true });
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
+  return (
+    <nav
+      aria-label="Capítulos de la biografía"
+      className="fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3.5 xl:flex"
+    >
+      {CHAPTERS.map((c) => {
+        const isActive = active === c.id;
+        return (
+          <a key={c.id} href={`#${c.id}`} className="group flex items-center gap-3">
+            <span
+              className={`rounded-full bg-white/85 px-2.5 py-1 text-[0.58rem] font-bold uppercase tracking-[0.18em] shadow-soft backdrop-blur transition-all duration-300 ${
+                isActive
+                  ? "translate-x-0 text-gold-dark opacity-100"
+                  : "translate-x-1 text-navy/50 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+              }`}
+            >
+              {c.label}
+            </span>
+            <span
+              className={`rounded-full transition-all duration-500 ${
+                isActive
+                  ? "h-2.5 w-2.5 bg-gold shadow-[0_0_0_3px_rgba(201,168,76,0.25),0_0_12px_rgba(201,168,76,0.6)]"
+                  : "h-1.5 w-1.5 bg-navy/30 shadow-[0_0_0_2px_rgba(255,255,255,0.5)] group-hover:bg-gold/70"
+              }`}
+            />
+          </a>
+        );
+      })}
+    </nav>
+  );
+}
 
 const infoCard = {
   nombre: "Enrique Avellán Portes",
@@ -345,6 +408,8 @@ export default function BiografiaPage() {
 
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-bone text-navy">
+      <ScrollProgress />
+      <ChapterRail />
       <MagazineNav />
 
       {/* ─── HERO EDITORIAL ─── */}
@@ -544,7 +609,7 @@ export default function BiografiaPage() {
       </header>
 
       {/* ─── ARTICLE OPENING WITH DROP CAP ─── */}
-      <section className="relative bg-bone py-24 lg:py-32">
+      <section id="cap-historia" className="relative bg-bone py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-20">
             <motion.div
@@ -608,7 +673,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── TIMELINE / KINETIC YEARS ─── */}
-      <section className="relative overflow-hidden bg-navy py-28 lg:py-40">
+      <section id="cap-hitos" className="relative overflow-hidden bg-navy py-28 lg:py-40">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-50"
@@ -676,7 +741,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── IDENTIDAD / FILOSOFÍA ─── */}
-      <section className="relative bg-bone py-24 lg:py-32">
+      <section id="cap-filosofia" className="relative bg-bone py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -748,7 +813,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── OCÉANO INTERNO ─── */}
-      <section className="relative overflow-hidden bg-navy py-28 lg:py-40">
+      <section id="cap-bienestar" className="relative overflow-hidden bg-navy py-28 lg:py-40">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
@@ -820,7 +885,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── CLÍNICA / TRATAMIENTOS ─── */}
-      <section className="relative bg-pearl py-24 lg:py-32">
+      <section id="cap-terapias" className="relative bg-pearl py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <div className="grid items-center gap-16 lg:grid-cols-12 lg:gap-20">
             <motion.div
@@ -914,7 +979,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── ENCICLOPEDIA DE LA SAL ─── */}
-      <section className="relative overflow-hidden bg-navy-light py-28 lg:py-36">
+      <section id="cap-sal" className="relative overflow-hidden bg-navy-light py-28 lg:py-36">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-30"
@@ -1059,7 +1124,7 @@ export default function BiografiaPage() {
       </section>
 
       {/* ─── VIDEOS / GALERÍA ─── */}
-      <section className="relative bg-bone py-24 lg:py-32">
+      <section id="cap-documental" className="relative bg-bone py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

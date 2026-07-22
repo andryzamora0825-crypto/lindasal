@@ -2,6 +2,7 @@ import React from "react";
 import StoreClient from "./StoreClient";
 import Navbar from "@/components/landing/Navbar";
 import Footer from "@/components/landing/Footer";
+import ScrollProgress from "@/components/landing/ScrollProgress";
 
 const BADGES = [
   { icon: "fa-leaf", label: "100% Orgánico" },
@@ -13,6 +14,7 @@ const BADGES = [
 export default function TiendaPage() {
   return (
     <main className="flex flex-col min-h-screen bg-bone selection:bg-gold/30 selection:text-navy">
+      <ScrollProgress />
       <Navbar />
 
       {/* Cabecera compacta de tienda */}

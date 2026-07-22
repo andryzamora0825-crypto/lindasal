@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -14,6 +14,12 @@ import {
   Waves,
   Sparkles,
   LayoutDashboard,
+  Link2,
+  Check,
+  Store,
+  Newspaper,
+  MessageCircle,
+  Wrench,
 } from "lucide-react";
 import { fadeUp, PageHeader } from "@/components/admin/AdminUI";
 
@@ -60,6 +66,83 @@ const MODULES = [
     accent: "group-hover:border-navy/30",
   },
 ];
+
+/* ── Herramientas rápidas: utilidades de un toque ── */
+function QuickTools() {
+  const [copied, setCopied] = useState(false);
+
+  const copyStoreLink = async () => {
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/tienda`);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {}
+  };
+
+  const toolClass =
+    "group flex items-center gap-3 rounded-2xl border border-pearl-dark/70 bg-white p-3.5 sm:p-4 shadow-soft hover:shadow-raised hover:border-gold/30 hover:-translate-y-0.5 transition-all duration-300 text-left w-full";
+  const iconClass =
+    "w-10 h-10 shrink-0 rounded-xl border flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-3";
+
+  return (
+    <motion.section variants={fadeUp} custom={2} initial="hidden" animate="visible">
+      <div className="flex items-baseline justify-between mb-3 sm:mb-4">
+        <h3 className="font-heading text-lg sm:text-xl text-navy flex items-center gap-2">
+          <Wrench className="w-4 h-4 text-gold-dark" strokeWidth={1.75} />
+          Herramientas rápidas
+        </h3>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <button type="button" onClick={copyStoreLink} className={toolClass}>
+          <span className={`${iconClass} bg-gold/10 border-gold/20 text-gold-dark`}>
+            {copied ? <Check className="w-5 h-5 text-emerald-500" strokeWidth={2} /> : <Link2 className="w-5 h-5" strokeWidth={1.75} />}
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[0.8rem] font-bold text-navy leading-tight">
+              {copied ? "¡Enlace copiado!" : "Copiar enlace"}
+            </span>
+            <span className="block text-[0.65rem] text-navy/45 mt-0.5 truncate">de la tienda</span>
+          </span>
+        </button>
+
+        <Link href="/tienda" className={toolClass}>
+          <span className={`${iconClass} bg-teal/10 border-teal/25 text-teal-dark`}>
+            <Store className="w-5 h-5" strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[0.8rem] font-bold text-navy leading-tight">Abrir tienda</span>
+            <span className="block text-[0.65rem] text-navy/45 mt-0.5 truncate">vista de cliente</span>
+          </span>
+        </Link>
+
+        <Link href="/feed" className={toolClass}>
+          <span className={`${iconClass} bg-navy/8 border-navy/15 text-navy`}>
+            <Newspaper className="w-5 h-5" strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[0.8rem] font-bold text-navy leading-tight">Ver el feed</span>
+            <span className="block text-[0.65rem] text-navy/45 mt-0.5 truncate">público</span>
+          </span>
+        </Link>
+
+        <a
+          href="https://wa.me/593964008919"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={toolClass}
+        >
+          <span className={`${iconClass} bg-emerald-500/10 border-emerald-500/20 text-emerald-600`}>
+            <MessageCircle className="w-5 h-5" strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[0.8rem] font-bold text-navy leading-tight">WhatsApp</span>
+            <span className="block text-[0.65rem] text-navy/45 mt-0.5 truncate">del negocio</span>
+          </span>
+        </a>
+      </div>
+    </motion.section>
+  );
+}
 
 export default function AdminDashboardPage() {
   return (
@@ -124,6 +207,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       </motion.div>
+
+      <QuickTools />
 
       {/* Tarjetas de módulos */}
       <div>
