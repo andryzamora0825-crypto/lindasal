@@ -156,6 +156,11 @@ function PostMosaicCard({
             </div>
 
             <div className="absolute inset-x-0 bottom-0 z-10 p-5 sm:p-6">
+              {post.title && (
+                <p className="font-heading text-lg leading-snug text-pearl mb-1 line-clamp-1">
+                  {post.title}
+                </p>
+              )}
               <p className="font-body text-[0.85rem] leading-relaxed text-pearl/95 line-clamp-3 sm:text-[0.92rem]">
                 {truncated}
               </p>
@@ -205,6 +210,11 @@ function PostMosaicCard({
                 <Sparkles aria-hidden="true" className="h-2.5 w-2.5" />
                 Reflexión
               </span>
+              {post.title && (
+                <p className="font-body text-[0.7rem] font-bold uppercase tracking-[0.18em] text-gold-light mb-2 line-clamp-1">
+                  {post.title}
+                </p>
+              )}
               <p className="font-heading text-[1.05rem] leading-[1.45] text-pearl sm:text-[1.2rem]">
                 &ldquo;{truncated}&rdquo;
               </p>
@@ -280,6 +290,11 @@ function FeaturedPost({ post }: { post: FeedPost }) {
         <div className="relative flex flex-col justify-between gap-8 p-8 lg:col-span-2 lg:p-12">
           <div>
             <span className="eyebrow mb-5 text-gold">Última publicación</span>
+            {post.title && (
+              <h2 className="font-heading text-2xl sm:text-3xl text-navy leading-tight mb-3">
+                {post.title}
+              </h2>
+            )}
             <p className="font-heading text-[1.15rem] leading-[1.45] text-navy sm:text-[1.35rem] lg:text-[1.5rem]">
               {post.content.length > 200
                 ? post.content.slice(0, 197) + "…"

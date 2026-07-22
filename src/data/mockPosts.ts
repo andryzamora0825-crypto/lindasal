@@ -1,5 +1,6 @@
 export interface FeedPost {
   id: string;
+  title?: string;
   author: {
     name: string;
     avatar: string;

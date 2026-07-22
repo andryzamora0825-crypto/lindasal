@@ -22,6 +22,7 @@ import {
   ArrowUp,
   User,
   Loader2,
+  Newspaper,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
@@ -79,6 +80,33 @@ export default function AdminSocialPage() {
   // History state
   const [postHistory, setPostHistory] = useState<any[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+
+  // Publicar contenido generado en el feed público del sitio
+  const [publishingFeed, setPublishingFeed] = useState(false);
+  const handlePublishToFeed = async (imageUrl: string | null, caption: string) => {
+    if (!imageUrl && !caption.trim()) {
+      alert("No hay contenido para publicar en el feed.");
+      return;
+    }
+    if (!confirm("¿Publicar este contenido en el feed público del sitio?")) return;
+    setPublishingFeed(true);
+    try {
+      const { error } = await supabase.from("feed_posts").insert({
+        title: "",
+        content: caption || "",
+        image_url: imageUrl,
+      });
+      if (error) throw error;
+      alert("✅ Publicado en el feed del sitio. Ya es visible en /feed.");
+    } catch (e: any) {
+      const hint = String(e?.message || "").includes("feed_posts")
+        ? "\n\nEjecuta supabase/feed-posts.sql en el SQL Editor de Supabase."
+        : "";
+      alert("Error publicando en el feed: " + (e?.message || "desconocido") + hint);
+    } finally {
+      setPublishingFeed(false);
+    }
+  };
 
   const loadHistory = async () => {
     setIsLoadingHistory(true);
@@ -686,6 +714,20 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                   >
                     <Copy className="w-4 h-4" strokeWidth={1.75} /> Copiar texto
                   </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handlePublishToFeed(generatedImage, generatedCaption)}
+                    disabled={publishingFeed}
+                    className="px-5 py-2.5 bg-gold/10 border border-gold/30 text-gold-dark rounded-full font-bold text-sm hover:bg-gold/20 transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-60"
+                    title="Publicar esta imagen y texto en el feed público del sitio"
+                  >
+                    {publishingFeed ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Newspaper className="w-4 h-4" strokeWidth={1.75} />
+                    )}
+                    Publicar en feed
+                  </motion.button>
                 </div>
               </motion.div>
             ) : (
@@ -833,6 +875,14 @@ ${brandLogoUrl ? "8. Incluye el LOGO de la marca (adjunto como imagen de referen
                           <Trash2 className="w-3 h-3" strokeWidth={1.75} /> Borrar
                         </button>
                       </div>
+                      <button
+                        onClick={() => handlePublishToFeed(post.image_url, post.caption || "")}
+                        disabled={publishingFeed}
+                        className="w-full py-2 bg-gold/5 border border-gold/25 hover:bg-gold/15 hover:-translate-y-0.5 text-gold-dark rounded-lg text-[11px] font-semibold transition-all duration-300 flex items-center justify-center gap-1.5 disabled:opacity-60"
+                        title="Publicar en el feed público del sitio"
+                      >
+                        <Newspaper className="w-3 h-3" strokeWidth={1.75} /> Publicar en feed
+                      </button>
                     </div>
                   </div>
 

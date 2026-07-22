@@ -15,6 +15,7 @@ import {
   LogOut,
   Waves,
   Store,
+  Newspaper,
 } from "lucide-react";
 
 type NavItem = {
@@ -32,6 +33,7 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Inventario", short: "Stock", href: "/admin/inventario", icon: Warehouse, group: "Operación" },
   { label: "Ventas", short: "Ventas", href: "/admin/ventas", icon: DollarSign, group: "Operación" },
   { label: "Publicidad IA", short: "IA", href: "/admin/social", icon: Megaphone, group: "Marketing", special: true },
+  { label: "Feed", short: "Feed", href: "/admin/feed", icon: Newspaper, group: "Marketing" },
   { label: "Configuración", short: "Ajustes", href: "/admin/config", icon: Settings, group: "Sistema" },
 ];
 
@@ -232,7 +234,7 @@ function MobileBottomNav() {
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Navegación principal"
     >
-      <ul className="grid grid-cols-5 h-[62px]">
+      <ul className="grid grid-cols-6 h-[62px]">
         {tabs.map((item) => {
           const active = isActive(item.href);
           const Icon = item.icon;
